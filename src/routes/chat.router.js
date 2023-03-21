@@ -1,10 +1,8 @@
 import express from "express";
+import { renderChat } from "../controllers/chat.controller";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  const user = req.session.user;
-  res.render("chat", { user });
-});
+router.get("/", renderChat);
 
 export default router;
