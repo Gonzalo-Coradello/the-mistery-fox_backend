@@ -2,7 +2,7 @@ import { productsService } from "../repositories/index.js";
 
 export const getProducts = async (req, res) => {
   try {
-    const products = await productsService.getPaginate();
+    const products = await productsService.getPaginate(req);
     res.json({ status: "success", payload: products });
   } catch (error) {
     console.log(error);

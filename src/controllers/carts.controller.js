@@ -33,7 +33,7 @@ export const addProduct = async (req, res) => {
 
     res.json({ status: "success", payload: updatedCart });
   } catch (error) {
-    console.log(error);
+    console.log(error)
     res.json({ status: "error", error });
   }
 };
@@ -43,10 +43,11 @@ export const updateCart = async (req, res) => {
   try {
     const cid = req.params.cid;
     const products = req.body;
+    
+    const prod = await Promise.all(products.map(async p => await productsService.getProduct(p.product)))
+    if(prod.some(p => p === null)) return res.json({ status: 'error', error: 'Some product does not exist' })
+
     const cart = await cartsService.updateCart(cid, {products})
-    // const cart = await CartModel.findOne({ _id: cid });
-    // cart.products = products;
-    // await cart.save();
 
     res.json({ status: "success", payload: cart });
   } catch (error) {
@@ -82,10 +83,6 @@ export const updateQuantity = async (req, res) => {
 export const emptyCart = async (req, res) => {
   try {
     const cid = req.params.cid;
-    // const cart = await CartModel.findOne({ _id: cid });
-    // cart.products = [];
-    // await cart.save();
-
     const cart = await cartsService.updateCart(cid, {products: []})
     res.json({ status: "success", payload: cart });
   } catch (error) {
@@ -107,14 +104,11 @@ export const deleteProduct = async (req, res) => {
 
     const productIndex = cart.products.findIndex((p) => p.product.equals(product._id));
 
-    // cart.products.splice(productIndex, 1);
-    // await cart.save();
-
     const products = [... cart.products]
     products.splice(productIndex, 1)
     const updatedCart = await cartsService.updateCart(cid, {products})
 
-    res.json({ status: "success", payload: cart });
+    res.json({ status: "success", payload: updatedCart });
   } catch (error) {
     console.log(error);
     res.json({ status: "error", error });

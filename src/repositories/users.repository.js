@@ -1,4 +1,4 @@
-import UserDTO from "../dao/DTO/user.dto";
+import UserDTO from "../dao/DTO/user.dto.js";
 
 export default class UsersRepository {
     constructor(dao) {
@@ -11,8 +11,7 @@ export default class UsersRepository {
         return new UserDTO(user)
     }
     getUserByEmail = async (email) => {
-        const user = await this.dao.getByEmail(email)
-        return new UserDTO(user)
+        return await this.dao.getByEmail(email)
     }
     createUser = async (data) => {
         return await this.dao.create(data)

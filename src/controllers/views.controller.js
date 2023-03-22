@@ -8,7 +8,7 @@ export const redirect = (req, res) => res.redirect("/sessions/login");
 export const getProducts = async (req, res) => {
   try {
 
-    const products = await productsService.getPaginate()
+    const { products, options: { limit, category, stock } } = await productsService.getPaginate(req)
 
     products.prevLink = products.hasPrevPage 
     ? `/products?page=${products.prevPage}&limit=${limit}${category ? `&category=${category}` : "" }${stock ? `&stock=${stock}` : ""}` 
@@ -49,7 +49,6 @@ export const getProduct = async (req, res) => {
     const pid = req.params.pid;
     const product = await productsService.getProduct(pid)
     const user = req.user;
-
     res.render("oneProduct", { product, user });
   } catch (error) {
     console.log(error);
@@ -87,7 +86,9 @@ export const filterByCategory = async (req, res) => {
 export const getCartProducts = async (req, res) => {
   try {
     const cid = req.params.cid;
-    const products = await cartsService.getCart(cid)
+    const cart = await cartsService.getCart(cid)
+    const products = cart.toObject()
+
     const user = req.user;
     res.render("cart", { products, user });
   } catch (error) {

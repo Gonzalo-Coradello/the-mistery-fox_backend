@@ -1,12 +1,12 @@
-import ProductsRepository from "./products.repository";
-import UsersRepository from "./users.repository";
-import CartRepository from "./carts.repository";
-import MessagesRepository from "./messages.repository";
+import ProductsRepository from "./products.repository.js";
+import UsersRepository from "./users.repository.js";
+import CartRepository from "./carts.repository.js";
+import MessagesRepository from "./messages.repository.js";
 
-import Products from "../dao/classes/products.dao";
-import Users from "../dao/classes/users.dao";
-import Carts from "../dao/classes/carts.dao";
-import Messages from "../dao/classes/messages.dao";
+import Products from "../dao/classes/products.dao.js";
+import Users from "../dao/classes/users.dao.js";
+import Carts from "../dao/classes/carts.dao.js";
+import Messages from "../dao/classes/messages.dao.js";
 
 export const productsService = new ProductsRepository(new Products)
 export const usersService = new UsersRepository(new Users)

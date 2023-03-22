@@ -1,4 +1,4 @@
-import ProductDTO from "../dao/DTO/product.dto"
+import ProductDTO from "../dao/DTO/product.dto.js"
 
 export default class ProductsRepository {
     constructor(dao) {
@@ -7,7 +7,7 @@ export default class ProductsRepository {
 
     getProducts = async () => await this.dao.get()
 
-    getPaginate = async() => {
+    getPaginate = async (req) => {
         const limit = req.query?.limit || 10;
         const page = req.query?.page || 1;
         const category = req.query?.category;
@@ -32,7 +32,7 @@ export default class ProductsRepository {
           lean: true,
         };
 
-        return await this.dao.getPaginate(query, options)
+        return {products: await this.dao.getPaginate(query, options), options: {... options, stock}}
     }
     
     getProduct = async (id) => {

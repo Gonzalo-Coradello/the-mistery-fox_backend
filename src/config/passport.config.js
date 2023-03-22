@@ -94,7 +94,7 @@ const initializePassport = () => {
             return done(null, admin);
           }
 
-          const user = await usersService.getUserByEmail(username).lean().exec()
+          const user = await usersService.getUserByEmail(username)
           if (!user) {
             console.log("User doesn't exist");
             return done(null, false);

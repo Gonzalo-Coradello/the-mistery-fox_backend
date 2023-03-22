@@ -9,7 +9,7 @@ export default class ProductDTO {
         this.price = product.price || 0
         this.status = product.status || true
         this.stock = product.stock || 0
-        this.categories = product.categories || ""
-        this.thumbnails = product.thumbnails || ""
+        this.categories = product.categories || []
+        this.thumbnails = product.thumbnails || []
     }
 }

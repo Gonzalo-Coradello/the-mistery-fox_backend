@@ -1,4 +1,4 @@
-import CartModel from "../models/cart.model";
+import CartModel from "../models/cart.model.js";
 
 export default class Carts {
     constructor() {}
@@ -9,7 +9,7 @@ export default class Carts {
     }
 
     getByID = async (id) => {
-        return await CartModel.findById(id).populate("products.product").lean().exec()
+        return await CartModel.findById(id).populate("products.product")
     }
 
     update = async (id, data) => {

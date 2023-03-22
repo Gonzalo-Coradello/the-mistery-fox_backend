@@ -17,7 +17,7 @@ import session from "express-session";
 import config from "./config/config.js";
 import { createMessage } from "./controllers/chat.controller.js";
 
-const { SESSION_SECRET, COOKIE_SECRET, MONGO_URI, DB_NAME } = config;
+const { PORT, SESSION_SECRET, COOKIE_SECRET, MONGO_URI, DB_NAME } = config;
 
 const app = express();
 const server = http.createServer(app);
@@ -53,7 +53,7 @@ mongoose.connect(MONGO_URI, { dbName: DB_NAME }, (error) => {
   }
 
   console.log("DB connected");
-  server.listen(8080, () => console.log("Listening on port 8080"));
+  server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
   server.on("error", (e) => console.log(e));
 });
 

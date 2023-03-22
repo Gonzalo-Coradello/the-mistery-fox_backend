@@ -1,4 +1,4 @@
-import { messagesService } from "../repositories";
+import { messagesService } from "../repositories/index.js";
 
 export const renderChat = (req, res) => {
   const user = req.session.user;
