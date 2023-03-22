@@ -8,31 +8,31 @@ export default class ProductsRepository {
     getProducts = async () => await this.dao.get()
 
     getPaginate = async (req) => {
-        const limit = req.query?.limit || 10;
-        const page = req.query?.page || 1;
-        const category = req.query?.category;
-        const sortQuery = req.query?.sort;
-        const sortOrder = req.query?.sortOrder || "desc";
-        const stock = req.query?.stock;
-    
-        const query = {
-          ...(category ? { categories: category } : null),
-          ...(stock ? { stock: { $gt: 0 } } : null),
-        };
-    
-        const sort = {};
-        if (sortQuery) {
-          sort[sortQuery] = sortOrder;
-        }
-    
-        const options = {
-          limit,
-          page,
-          sort,
-          lean: true,
-        };
+      const limit = req.query?.limit || 10;
+      const page = req.query?.page || 1;
+      const category = req.query?.category;
+      const sortQuery = req.query?.sort;
+      const sortOrder = req.query?.sortOrder || "desc";
+      const stock = req.query?.stock;
+  
+      const query = {
+        ...(category ? { categories: category } : null),
+        ...(stock ? { stock: { $gt: 0 } } : null),
+      };
+  
+      const sort = {};
+      if (sortQuery) {
+        sort[sortQuery] = sortOrder;
+      }
+  
+      const options = {
+        limit,
+        page,
+        sort,
+        lean: true,
+      };
 
-        return {products: await this.dao.getPaginate(query, options), options: {... options, stock}}
+      return {products: await this.dao.getPaginate(query, options), options: {... options, stock}}
     }
     
     getProduct = async (id) => {

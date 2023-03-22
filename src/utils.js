@@ -16,6 +16,7 @@ export const generateToken = (user) => {
 export const passportCall = (strategy) => {
   return async (req, res, next) => {
     passport.authenticate(strategy, function (err, user) {
+
       if (err) return next(err);
       if (!user) {
         return res
@@ -48,6 +49,8 @@ export const viewsPassportCall = (strategy) => {
 export const authorization = (role) => {
   return async (req, res, next) => {
     const user = req.user || null;
+
+    console.log(req.user)
 
     if (!user)
       return res
