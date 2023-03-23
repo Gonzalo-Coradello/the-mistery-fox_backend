@@ -39,7 +39,7 @@ app.use(express.static(__dirname + "/public"));
 
 // Configuración de rutas
 app.use("/api/products", passportCall("current"), authorization("user"), productsRouter);
-app.use("/api/carts", cartsRouter);
+app.use("/api/carts", passportCall("current"), authorization("user"), cartsRouter);
 app.use("/api/sessions", sessionsRouter);
 app.use("/chat", chatRouter);
 app.use("/", viewsRouter);

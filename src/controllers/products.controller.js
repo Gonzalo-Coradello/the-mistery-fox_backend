@@ -36,8 +36,13 @@ export const addProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {
     const pid = req.params.pid;
-    const productToUpdate = req.body;
-    const result = await productsService.updateProduct(pid, productToUpdate);
+    const product = await productsService.getProduct(pid)
+    console.log(product)
+    const updatedProduct = {
+      ... product,
+      ... req.body
+    }
+    const result = await productsService.updateProduct(pid, updatedProduct);
     res.json({ status: "success", payload: result });
   } catch (error) {
     console.log(error);
