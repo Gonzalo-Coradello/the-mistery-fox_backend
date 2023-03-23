@@ -26,8 +26,8 @@ const router = Router();
 
 router.get("/", redirect);
 router.get("/products", viewsPassportCall("current"), getProducts);
-router.get("/products/:pid", viewsPassportCall("current"), getProduct);
 router.get("/products/create", viewsPassportCall("current"), viewsAuthorization("admin"), renderForm);
+router.get("/products/:pid", viewsPassportCall("current"), getProduct);
 router.post("/products", viewsPassportCall("current"), viewsAuthorization("admin"), addProduct);
 router.post("/products/category", viewsPassportCall("current"), filterByCategory);
 router.post("/products/delete/:pid", viewsPassportCall("current"), viewsAuthorization("admin"), deleteProduct);

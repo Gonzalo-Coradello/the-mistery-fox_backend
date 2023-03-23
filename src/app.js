@@ -58,4 +58,4 @@ mongoose.connect(MONGO_URI, { dbName: DB_NAME }, (error) => {
 });
 
 // Websockets chat
-io.on("connection", createMessage);
+io.on("connection", createMessage(io));
