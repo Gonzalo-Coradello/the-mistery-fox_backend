@@ -1,6 +1,6 @@
 import CartModel from "../dao/models/cart.model.js";
 import ProductModel from "../dao/models/product.model.js";
-import { productsService, cartsService, ticketsService } from "../repositories/index.js";
+import { productsService, cartsService } from "../repositories/index.js";
 
 // Crear carrito
 export const createCart = async (req, res) => {
