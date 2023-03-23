@@ -12,7 +12,7 @@ import sessionsRouter from "./routes/sessions.router.js";
 import cookieParser from "cookie-parser";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
-import { passportCall, authorization } from "./utils.js";
+import { passportCall, authorization } from "./middleware/auth.js";
 import session from "express-session";
 import config from "./config/config.js";
 import { createMessage } from "./controllers/chat.controller.js";
@@ -38,10 +38,10 @@ app.set("view engine", "handlebars");
 app.use(express.static(__dirname + "/public"));
 
 // Configuración de rutas
-app.use("/api/products", passportCall("current"), authorization("user"), productsRouter);
+app.use("/api/products", productsRouter);
 app.use("/api/carts", passportCall("current"), authorization("user"), cartsRouter);
 app.use("/api/sessions", sessionsRouter);
-app.use("/chat", chatRouter);
+app.use("/chat", passportCall("current"), authorization("user"), chatRouter);
 app.use("/", viewsRouter);
 
 // Conectando mongoose con Atlas e iniciando el servidor

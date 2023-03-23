@@ -121,7 +121,7 @@ export const purchase = async (req, res) => {
     const { cid } = req.params
     const purchaser = req.user.email
     const cart = await cartsService.getCart(cid)
-    if(cart.length === 0) return res.json({ status: 'error', error: 'El carrito está vacío' })
+    if(cart.products.length === 0) return res.json({ status: 'error', error: 'El carrito está vacío' })
 
     const cartProducts = await Promise.all(cart.products.map(async product => {
       const newObj = await productsService.getProduct(product.product)
@@ -130,8 +130,8 @@ export const purchase = async (req, res) => {
     }))
     const amount = cartProducts.reduce((acc, product) => acc + product.price, 0)
    
-    const outOfStock = cartProducts.filter(p => p.stock === 0)
-    const available = cartProducts.filter(p => p.stock > 0)
+    const outOfStock = cartProducts.filter(p => p.stock < p.quantity)
+    const available = cartProducts.filter(p => p.stock >= p.quantity)
 
     // Disminuye el stock de cada producto por la cantidad guardada en el carrito
     available.forEach(async product => await productsService.updateStock(product._id, product.quantity))

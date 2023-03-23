@@ -91,8 +91,9 @@ const initializePassport = () => {
 
             const token = generateToken(admin);
             admin.token = token;
+            const adminDTO = new UserDTO(admin)
 
-            return done(null, admin);
+            return done(null, adminDTO);
           }
 
           const user = await usersService.getUserByEmail(username)
