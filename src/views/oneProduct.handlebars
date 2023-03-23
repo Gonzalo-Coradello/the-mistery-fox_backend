@@ -26,12 +26,9 @@
       </form>
     </div>
   </div>
-  <form action="/products/delete/{{product._id}}" method="get">
-        <input
-          type="submit"
-          value="Eliminar producto"
-          class="btn btn-ghost my-4"
-        />
-      </form>
+
+  <form action="/products/delete/{{product._id}}" method="post">
+    <input type="submit" value="Eliminar producto" class="btn btn-ghost my-4" />
+  </form>
 
 </section>

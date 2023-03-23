@@ -1,4 +1,5 @@
 import CartDTO from "../dao/DTO/cart.dto.js";
+import { productsService, ticketsService } from "./index.js";
 
 export default class CartRepository {
   constructor(dao) {
@@ -32,4 +33,25 @@ export default class CartRepository {
     }
     return cart
   };
+
+  purchase = async (cid, purchaser, ) => {
+    const cart = await this.getCart(cid)
+    if(cart.products.length === 0) throw new Error('El carrito está vacío')
+
+    const cartProducts = await Promise.all(cart.products.map(async product => {
+      const newObj = await productsService.getProduct(product.product || product._id)
+      newObj.quantity = product.quantity
+      return newObj
+    }))
+    
+    const outOfStock = cartProducts.filter(p => p.stock < p.quantity).map(p => ({product: p._id, quantity: p.quantity}))
+    const available = cartProducts.filter(p => p.stock >= p.quantity)
+    const amount = available.reduce((acc, product) => acc + product.price, 0)
+    
+    const ticket = available.length > 0 ? (await ticketsService.createTicket({ amount, purchaser })).toObject() : null
+    available.forEach(async product => await productsService.updateStock(product._id, product.quantity))
+    await this.updateCart(cid, {products: outOfStock})
+
+    return { outOfStock, ticket }
+  }
 }

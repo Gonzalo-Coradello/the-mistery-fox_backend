@@ -7,7 +7,6 @@ export const redirect = (req, res) => res.redirect("/sessions/login");
 // Get products
 export const getProducts = async (req, res) => {
   try {
-
     const { products, options: { limit, category, stock } } = await productsService.getPaginate(req)
 
     products.prevLink = products.hasPrevPage 
@@ -59,7 +58,6 @@ export const getProduct = async (req, res) => {
 // Add product
 export const addProduct = async (req, res) => {
   try {
-    // const newProduct = await ProductModel.create(req.body)
     const data = req.body;
     const product = await productsService.createProduct(data)
 
@@ -90,7 +88,7 @@ export const getCartProducts = async (req, res) => {
     const products = cart.toObject()
 
     const user = req.user;
-    res.render("cart", { products, user });
+    res.render("cart", { cid, products, user });
   } catch (error) {
     console.log(error);
     res.json({ result: "error", error });
@@ -110,6 +108,38 @@ export const addToCart = async (req, res) => {
     res.json({ status: "error", error });
   }
 };
+
+// Delete product from cart
+export const deleteCartProducts = async (req, res) => {
+  try {
+    const cid = req.params.cid;
+    const cart = await cartsService.updateCart(cid, {products: []})
+    const user = req.user;
+    res.render("cart", { cid, products: cart, user })
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error });
+  }
+}
+
+// Purchase
+export const purchase = async (req, res) => {
+  try {
+    const { cid } = req.params
+    const purchaser = req.user.email
+    const { outOfStock, ticket } = await cartsService.purchase(cid, purchaser)
+    
+    if(outOfStock.length > 0) {
+      const ids = outOfStock.map(p => p.product)
+      return res.render("purchase", { ids, ticket, cid })
+    }
+
+    res.render("purchase", { ticket })
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error });
+  }
+}
 
 // SESSIONS
 // Vista para registrar usuarios
