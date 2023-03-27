@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import config from "./config/config.js";
 import { ticketsService } from "./repositories/index.js";
 import TicketModel from "./dao/models/ticket.model.js";
+import { faker } from "@faker-js/faker";
 
 const { PRIVATE_KEY } = config;
 
@@ -35,6 +36,22 @@ export const codeGenerator = async () => {
   }
 
   return letters.concat(nums)
+}
+
+export const generateProducts = () => {
+  return {
+    id: faker.database.mongodbObjectId(),
+    title: faker.commerce.product(),
+    author: faker.name.fullName(),
+    description: faker.commerce.productDescription(),
+    lang: "es",
+    code: faker.random.alphaNumeric(10),
+    price: faker.commerce.price(),
+    status: faker.datatype.boolean(),
+    stock: faker.random.numeric(),
+    categories: [faker.commerce.productAdjective(), faker.commerce.productAdjective()],
+    thumbnails: [faker.image.image()]
+  }
 }
 
 const __filename = fileURLToPath(import.meta.url);

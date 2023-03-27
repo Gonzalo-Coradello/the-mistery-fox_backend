@@ -16,6 +16,8 @@ import { passportCall, authorization } from "./middleware/auth.js";
 import session from "express-session";
 import config from "./config/config.js";
 import { createMessage } from "./controllers/chat.controller.js";
+import mockingProducts from "./mocking/products.mocking.js"
+import errorHandler from "./middleware/errors/index.js"
 
 const { PORT, SESSION_SECRET, COOKIE_SECRET, MONGO_URI, DB_NAME } = config;
 
@@ -42,7 +44,11 @@ app.use("/api/products", productsRouter);
 app.use("/api/carts", passportCall("current"), authorization("user"), cartsRouter);
 app.use("/api/sessions", sessionsRouter);
 app.use("/chat", passportCall("current"), authorization("user"), chatRouter);
+app.use("/mockingproducts", mockingProducts)
 app.use("/", viewsRouter);
+
+// Middleware de errores
+app.use(errorHandler)
 
 // Conectando mongoose con Atlas e iniciando el servidor
 mongoose.set("strictQuery", false);
