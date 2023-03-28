@@ -65,8 +65,18 @@ export const updateQuantity = async (req, res) => {
     const cart = await cartsService.getCart(cid)
     const product = await productsService.getProduct(pid)
     
-    if (!cart) return res.send({ status: "error", error: "No se ha encontrado el carrito" });
-    if (!product) return res.send({ status: "error", error: "No se ha encontrado el producto" });
+    if (!cart) CustomError.createError({
+      name: "Find cart error",
+      cause: generateNullError("Cart"),
+      message: "Error trying to find cart",
+      code: EErrors.NULL_ERROR
+    })
+    if (!product) CustomError.createError({
+      name: "Find product error",
+      cause: generateNullError("Product"),
+      message: "Error trying to find product",
+      code: EErrors.NULL_ERROR
+    })
 
     const productIndex = cart.products.findIndex((p) => p.product.equals(product._id))
     cart.products[productIndex].quantity = parseInt(quantity)

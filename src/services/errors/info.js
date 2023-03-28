@@ -15,3 +15,7 @@ export const generateDuplicatedError = (code) => {
 export const generateStockError = (stock) => {
     return `Stock must be either a positive number or zero. ${stock} is invalid.`
 }
+
+export const generateNullError = (cartOrProduct) => {
+    return `${cartOrProduct} does not exist.`
+}

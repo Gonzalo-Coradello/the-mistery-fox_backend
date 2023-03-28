@@ -1,4 +1,7 @@
 import CartDTO from "../dao/DTO/cart.dto.js";
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enums.js";
+import { generateNullError } from "../services/errors/info.js";
 import { productsService, ticketsService } from "./index.js";
 
 export default class CartRepository {
@@ -20,8 +23,18 @@ export default class CartRepository {
   };
 
   addProductToCart = async (cart, product) => {
-    if (!cart) throw new Error("No se ha encontrado el carrito" ) 
-    if (!product) throw new Error("No se ha encontrado el producto")
+    if (!cart) CustomError.createError({
+      name: "Find cart error",
+      cause: generateNullError("Cart"),
+      message: "Error trying to find cart",
+      code: EErrors.NULL_ERROR
+    })
+    if (!product) CustomError.createError({
+      name: "Find product error",
+      cause: generateNullError("Product"),
+      message: "Error trying to find product",
+      code: EErrors.NULL_ERROR
+    })
 
     const productIndex = cart.products.findIndex((p) => p.product?.equals(product._id));
     if (productIndex === -1) {
