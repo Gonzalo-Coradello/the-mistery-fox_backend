@@ -1,3 +1,6 @@
 node_modules
 notes.txt
 .env
+.env.development
+.env.production
+errors.log
