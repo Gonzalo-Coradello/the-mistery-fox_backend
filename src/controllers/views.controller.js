@@ -19,7 +19,6 @@ export const getProducts = async (req, res) => {
     const user = req.user;
     res.render("products", { products, user });
   } catch (error) {
-    console.log(error);
     res.render("base", {error});
   }
 };
@@ -37,8 +36,7 @@ export const deleteProduct = async (req, res) => {
     await productsService.deleteProduct(pid)
     res.redirect("/products");
   } catch (error) {
-    console.log(error);
-    res.json({ status: "error", error });
+    res.render("base", {error});
   }
 };
 
@@ -50,8 +48,7 @@ export const getProduct = async (req, res) => {
     const user = req.user;
     res.render("oneProduct", { product, user });
   } catch (error) {
-    console.log(error);
-    res.json({ status: "error", error });
+    res.render("base", {error});
   }
 };
 
@@ -63,8 +60,7 @@ export const addProduct = async (req, res) => {
 
     res.redirect("/products/" + product._id);
   } catch (error) {
-    console.log(error);
-    res.json({ status: "error", error });
+    res.render("base", {error});
   }
 };
 
@@ -74,8 +70,7 @@ export const filterByCategory = async (req, res) => {
     const category = req.body.category;
     res.redirect(`/products?category=${category}`);
   } catch (error) {
-    console.log(error);
-    res.json({ status: "error", error });
+    res.render("base", {error});
   }
 };
 
@@ -90,8 +85,7 @@ export const getCartProducts = async (req, res) => {
     const user = req.user;
     res.render("cart", { cid, products, user });
   } catch (error) {
-    console.log(error);
-    res.json({ result: "error", error });
+    res.render("base", {error});
   }
 };
 
@@ -104,8 +98,7 @@ export const addToCart = async (req, res) => {
     cartsService.addProductToCart(cart, product)
     res.redirect("/carts/" + cid);
   } catch (error) {
-    console.log(error);
-    res.json({ status: "error", error });
+    res.render("base", {error});
   }
 };
 
@@ -117,8 +110,7 @@ export const deleteCartProducts = async (req, res) => {
     const user = req.user;
     res.render("cart", { cid, products: cart, user })
   } catch (error) {
-    console.log(error);
-    res.json({ status: "error", error });
+    res.render("base", {error});
   }
 }
 
@@ -136,8 +128,7 @@ export const purchase = async (req, res) => {
 
     res.render("purchase", { ticket })
   } catch (error) {
-    console.log(error);
-    res.json({ status: "error", error });
+    res.render("base", {error});
   }
 }
 
