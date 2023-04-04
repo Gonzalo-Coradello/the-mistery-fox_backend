@@ -1,9 +1,14 @@
 import dotenv from "dotenv";
+import options from './process.js'
 
-dotenv.config();
+const environment = options.mode
+
+dotenv.config({
+  path: environment === "development" ? "./.env.development" : "./.env.production"
+});
 
 export default {
-  PORT: process.env.PORT || 8080,
+  PORT: process.env.PORT,
   PRIVATE_KEY: process.env.PRIVATE_KEY,
   COOKIE_NAME: process.env.COOKIE_NAME,
   COOKIE_SECRET: process.env.COOKIE_SECRET,
