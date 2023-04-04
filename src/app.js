@@ -18,6 +18,7 @@ import config from "./config/config.js";
 import { createMessage } from "./controllers/chat.controller.js";
 import mockingProducts from "./mocking/products.mocking.js"
 import errorHandler from "./middleware/errors/index.js"
+import { addLogger } from "./middleware/logger.js";
 
 const { PORT, SESSION_SECRET, COOKIE_SECRET, MONGO_URI, DB_NAME } = config;
 
@@ -32,6 +33,14 @@ initializePassport();
 app.use(passport.initialize());
 app.use(session({ secret: SESSION_SECRET, resave: false, saveUninitialized: true }));
 app.use(passport.session());
+
+// Winston Logger
+app.use(addLogger)
+
+app.get('/test', (req, res) => {
+  req.logger.warning('Alerta!')
+  res.send({message: 'Prueba de logger'})
+})
 
 // Configurando el motor de plantillas
 app.engine("handlebars", handlebars.engine());
