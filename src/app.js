@@ -18,7 +18,7 @@ import config from "./config/config.js";
 import { createMessage } from "./controllers/chat.controller.js";
 import mockingProducts from "./routes/testing/products.mocking.js"
 import errorHandler from "./middleware/errors/index.js"
-import { addLogger } from "./middleware/logger.js";
+import { logger, addLogger } from "./middleware/logger.js";
 import loggerRouter from "./routes/testing/logger.router.js"
 
 const { PORT, SESSION_SECRET, COOKIE_SECRET, MONGO_URI, DB_NAME } = config;
@@ -60,13 +60,12 @@ app.use(errorHandler)
 mongoose.set("strictQuery", false);
 mongoose.connect(MONGO_URI, { dbName: DB_NAME }, (error) => {
   if (error) {
-    console.log("Can't connect to the DB");
-    return;
+    return logger.fatal("Can't connect to the DB");
   }
 
-  console.log("DB connected");
-  server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
-  server.on("error", (e) => console.log(e));
+  logger.info("DB connected");
+  server.listen(PORT, () => logger.info(`Listening on port ${PORT}`));
+  server.on("error", (e) => logger.error(e));
 });
 
 // Websockets chat
