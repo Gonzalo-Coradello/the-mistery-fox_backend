@@ -14,11 +14,11 @@ const loggerOptions = {
     },
     colors: {
         fatal: 'red',
-        error: 'orange',
+        error: 'red',
         warning: 'yellow',
         info: 'cyan',
         http: 'blue',
-        debug: 'white'
+        debug: 'gray'
     }
 }
 
