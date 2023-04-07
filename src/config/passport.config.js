@@ -66,7 +66,7 @@ const initializePassport = () => {
 
           return done(null, result);
         } catch (error) {
-          req.logger.error(error);
+          req.logger.error(error.toString());
           return done("Error al registrar el usuario: " + error);
         }
       }

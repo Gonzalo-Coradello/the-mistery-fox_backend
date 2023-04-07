@@ -18,7 +18,7 @@ export const getUser = async (req, res) => {
 
     res.json({ status: "success", payload: user });
   } catch(error) {
-    req.logger.error(error);
+    req.logger.error(error.toString());
     res.json({status: error, error});
   }
 };

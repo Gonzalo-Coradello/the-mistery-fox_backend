@@ -11,7 +11,7 @@ export const createCart = async (req, res) => {
     const cart = await cartsService.createCart();
     res.json({ status: "success", payload: cart });
   } catch (error) {
-    req.logger.error(error);
+    req.logger.error(error.toString());
     res.json({ status: "error", error });
   }
 };
@@ -23,7 +23,7 @@ export const getProducts = async (req, res) => {
     const cart = await cartsService.getCart(cid);
     res.json({ status: "success", payload: cart });
   } catch (error) {
-    req.logger.error(error);
+    req.logger.error(error.toString());
     res.json({ status: "error", error });
   }
 };
@@ -38,7 +38,7 @@ export const addProduct = async (req, res) => {
 
     res.json({ status: "success", payload: updatedCart });
   } catch (error) {
-    req.logger.error(error);
+    req.logger.error(error.toString());
     res.json({ status: "error", error });
   }
 };
@@ -64,7 +64,7 @@ export const updateCart = async (req, res) => {
 
     res.json({ status: "success", payload: cart });
   } catch (error) {
-    req.logger.error(error);
+    req.logger.error(error.toString());
     res.json({ status: "error", error });
   }
 };
@@ -101,7 +101,7 @@ export const updateQuantity = async (req, res) => {
 
     res.json({ status: "success", payload: updatedCart });
   } catch (error) {
-    req.logger.error(error);
+    req.logger.error(error.toString());
     res.json({ status: "error", error });
   }
 };
@@ -113,7 +113,7 @@ export const emptyCart = async (req, res) => {
     const cart = await cartsService.updateCart(cid, { products: [] });
     res.json({ status: "success", payload: cart });
   } catch (error) {
-    req.logger.error(error);
+    req.logger.error(error.toString());
     res.json({ status: "error", error });
   }
 };
@@ -151,7 +151,7 @@ export const deleteProduct = async (req, res) => {
 
     res.json({ status: "success", payload: updatedCart });
   } catch (error) {
-    req.logger.error(error);
+    req.logger.error(error.toString());
     res.json({ status: "error", error });
   }
 };
@@ -171,7 +171,7 @@ export const purchase = async (req, res) => {
 
     res.json({ status: "success", payload: ticket });
   } catch (error) {
-    req.logger.error(error);
+    req.logger.error(error.toString());
     res.json({ status: "error", error });
   }
 };
