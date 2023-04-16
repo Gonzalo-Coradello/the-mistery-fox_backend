@@ -189,7 +189,7 @@ const initializePassport = () => {
   });
 
   passport.deserializeUser(async (id, done) => {
-    const user = await usersService.getUserByID(id);
+    const user = await usersService.getUserDataByID(id);
     done(null, user);
   });
 };

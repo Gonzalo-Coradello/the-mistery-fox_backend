@@ -6,6 +6,8 @@ import {
   login,
   logout,
   getUser,
+  sendRecoveryMail,
+  changePassword,
 } from "../controllers/sessions.controller.js";
 
 const router = Router();
@@ -15,6 +17,6 @@ router.post("/login", passportCall("login"), login);
 router.get("/logout", passportCall("current"), logout);
 router.get("/current", passportCall("current"), getUser);
 router.get( "/github", passport.authenticate("github", { scope: ["user:email"] }), async (req, res) => {});
-router.post("/password_reset", passportCall("current"), "controller function");
-router.post("/password_reset/:uid/:token", "controller function")
+router.post("/password_reset", passportCall("current"), sendRecoveryMail);
+router.put("/password_reset/:uid/:token", changePassword)
 export default router;

@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer"
 import config from "../config/config.js"
 
-const { user, pass } = config
+const { USER_MAIL: user, USER_PASS: pass } = config
 
 export default class Mail {
     constructor() {
@@ -18,7 +18,7 @@ export default class Mail {
     send = async(user, subject, html) => {
         const result = await this.transport.sendMail({
             from: `CoderCommerce <${user}>`,
-            to: user.email,
+            to: user,
             subject,
             html
         })

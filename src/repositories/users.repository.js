@@ -4,6 +4,7 @@ import EErrors from "../services/errors/enums.js";
 import { generateAuthenticationError } from "../services/errors/info.js";
 import Mail from "../services/mail.js";
 import config from "../config/config.js";
+import { generateToken } from "../utils.js";
 
 export default class UsersRepository {
   constructor(dao) {
@@ -14,6 +15,10 @@ export default class UsersRepository {
   getUsers = async () => await this.dao.get();
 
   getUserByID = async (id) => {
+    return await this.dao.getByID(id);
+  };
+
+  getUserDataByID = async (id) => {
     const user = await this.dao.getByID(id);
     return new UserDTO(user);
   };
@@ -32,7 +37,7 @@ export default class UsersRepository {
   };
 
   sendMail = async (email) => {
-    const user = this.getUserByEmail(email)
+    const user = await this.getUserByEmail(email)
     if (!user) CustomError.createError({
       name: "Authentication error",
       cause: generateAuthenticationError(),
@@ -47,12 +52,10 @@ export default class UsersRepository {
     <p>Hola 👋</p>
     <p>Solicistaste un cambio de contraseña para tu cuenta.</p>
     <p>Podés hacerlo desde acá:</p>
-    <button><a href=${config.BASE_URL}/${user._id}/${token}>Cambiar contraseña</a></button>
+    <a href=${config.BASE_URL}/${user.id || user._id}/${token}>Cambiar contraseña</a>
     <br>
     <p>¡Saludos!</p>`
 
-    return await mail.send(email, "Restauración de contraseña", html)
+    return await this.mail.send(email, "Restauración de contraseña", html)
   }
-
-  changePassword
 }

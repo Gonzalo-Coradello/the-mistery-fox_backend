@@ -15,7 +15,7 @@ export const generateToken = (user, time = 24) => {
 };
 
 export const validateToken = (token) => {
-  jwt.verify(token, config.PRIVATE_KEY, function(err, decoded) {
+  return jwt.verify(token, config.PRIVATE_KEY, function(err, decoded) {
     return {err, decoded}
   })
 }
