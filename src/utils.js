@@ -9,10 +9,16 @@ import { faker } from "@faker-js/faker";
 
 const { PRIVATE_KEY } = config;
 
-export const generateToken = (user) => {
-  const token = jwt.sign({ user }, PRIVATE_KEY, { expiresIn: "24h" });
+export const generateToken = (user, time = 24) => {
+  const token = jwt.sign({ user }, PRIVATE_KEY, { expiresIn:  `${time}h` });
   return token;
 };
+
+export const validateToken = (token) => {
+  jwt.verify(token, config.PRIVATE_KEY, function(err, decoded) {
+    return {err, decoded}
+  })
+}
 
 export const createHash = (password) => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 export const isValidPassword = (user, password) => bcrypt.compareSync(password, user.password);

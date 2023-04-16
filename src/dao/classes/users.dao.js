@@ -19,4 +19,8 @@ export default class Users {
         const user = await UserModel.create(data)
         return user
     }
+
+    update = async (id, data) => {
+        return await UserModel.updateOne({ _id: id }, data)
+    }
 }
