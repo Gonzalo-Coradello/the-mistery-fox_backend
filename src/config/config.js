@@ -8,6 +8,7 @@ dotenv.config({
 });
 
 export default {
+  BASE_URL: process.env.BASE_URL,
   PORT: process.env.PORT,
   PRIVATE_KEY: process.env.PRIVATE_KEY,
   COOKIE_NAME: process.env.COOKIE_NAME,
@@ -23,4 +24,6 @@ export default {
   GITHUB_CALLBACK_URL: process.env.GITHUB_CALLBACK_URL,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  USER_MAIL: process.env.USER_MAIL,
+  USER_PASS: process.env.USER_PASS
 };
