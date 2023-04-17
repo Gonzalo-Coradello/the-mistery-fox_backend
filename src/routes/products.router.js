@@ -12,8 +12,8 @@ const router = Router();
 
 router.get("/", passportCall("current"), getProducts);
 router.get("/:pid", passportCall("current"), getProduct);
-router.post("/", passportCall("current"), authorization("admin"), addProduct);
-router.put("/:pid", passportCall("current"), authorization("admin"), updateProduct);
-router.delete("/:pid", passportCall("current"), authorization("admin"), deleteProduct);
+router.post("/", passportCall("current"), authorization(["premium", "admin"]), addProduct);
+router.put("/:pid", passportCall("current"), authorization(["premium", "admin"]), updateProduct);
+router.delete("/:pid", passportCall("current"), authorization(["premium", "admin"]), deleteProduct);
 
 export default router;

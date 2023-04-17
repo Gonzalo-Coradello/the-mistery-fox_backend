@@ -4,6 +4,6 @@ import { passportCall, authorization } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", passportCall("current"), authorization("user"), renderChat);
+router.get("/", passportCall("current"), authorization(["user", "premium"]), renderChat);
 
 export default router;
