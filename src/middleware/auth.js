@@ -37,7 +37,7 @@ export const viewsPassportCall = (strategy) => {
   };
 };
 
-export const authorization = (role) => {
+export const authorization = (roles) => {
   return async (req, res, next) => {
     const user = req.user || null;
 
@@ -47,19 +47,21 @@ export const authorization = (role) => {
       message: "Invalid credentials.", 
       code: EErrors.AUTHENTICATION_ERROR
     })
-    if (user.role !== role)
+    if (!roles.includes(user.role)) {
       logger.error("Error. Unauthorized.")
       return res.status(403).json({ status: "error", error: "Unauthorized" });
+    }
+
     next();
   };
 };
 
-export const viewsAuthorization = (role) => {
+export const viewsAuthorization = (roles) => {
   return async (req, res, next) => {
     const user = req.user || null;
 
     if (!user) return res.status(401).redirect("/login");
-    if (user.role !== role)
+    if (!roles.includes(user.role))
       return res
         .status(403)
         .render("errors/base", { error: "Not authorized", user });
