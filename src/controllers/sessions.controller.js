@@ -46,7 +46,8 @@ export const changePassword = async (req, res) => {
     const { err } = validateToken(token)
     const user = await usersService.getUserByID(uid)
     
-    if(err?.name === "TokenExpiredError") return res.status(403).redirect("/password_reset")
+    // if(err?.name === "TokenExpiredError") return res.status(403).redirect("/password_reset")
+    if(err?.name === "TokenExpiredError") return res.status(403).json({status: "error", error: "El token expiró"})
     else if(err) return res.json({status: "error", error: err})
 
     if(!newPassword || !confirmation) return res.status(400).json({status: "error", error: "Escriba y confirme la nueva contraseña"})

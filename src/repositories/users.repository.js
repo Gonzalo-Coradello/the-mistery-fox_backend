@@ -48,11 +48,10 @@ export default class UsersRepository {
     const token = generateToken(user,  1)
 
     const html = `<h1>Restauración de contraseña</h1>
-    <br>
     <p>Hola 👋</p>
     <p>Solicistaste un cambio de contraseña para tu cuenta.</p>
     <p>Podés hacerlo desde acá:</p>
-    <a href=${config.BASE_URL}/${user.id || user._id}/${token}>Cambiar contraseña</a>
+    <a href=${config.BASE_URL}/sessions/password_reset/${user.id || user._id}/${token}>Cambiar contraseña</a>
     <br>
     <p>¡Saludos!</p>`
 
