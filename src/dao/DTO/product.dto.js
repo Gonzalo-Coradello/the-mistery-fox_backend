@@ -11,5 +11,6 @@ export default class ProductDTO {
         this.stock = product.stock || 0
         this.categories = product.categories || []
         this.thumbnails = product.thumbnails || []
+        this.owner = product.owner || "admin"
     }
 }

@@ -35,6 +35,15 @@ export const renderForm = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   try {
     const pid = req.params.pid;
+    const user = req.user;
+    const product = await productsService.getProduct(pid);
+
+    if(user.role === "premium" && user.id !== product.owner) {
+      const error = "You can't modify a product owned by another user"
+      req.logger.error(error)
+      return res.status(403).json({status: "error", error})
+    }
+    
     await productsService.deleteProduct(pid)
     res.redirect("/products");
   } catch (error) {
@@ -59,7 +68,11 @@ export const getProduct = async (req, res) => {
 // Add product
 export const addProduct = async (req, res) => {
   try {
+    const { role, id } = req.user
     const data = req.body;
+
+    if(role === "premium") data.owner = id
+
     const product = await productsService.createProduct(data)
 
     res.redirect("/products/" + product._id);
