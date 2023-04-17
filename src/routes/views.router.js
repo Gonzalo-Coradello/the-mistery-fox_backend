@@ -19,6 +19,10 @@ import {
   getUser,
   githubLogin,
   deleteCartProducts,
+  renderForgotPassword,
+  sendRecoveryMail,
+  renderChangePassword,
+  changePassword,
 } from "../controllers/views.controller.js";
 import { viewsPassportCall, viewsAuthorization } from "../middleware/auth.js";
 
@@ -42,5 +46,9 @@ router.post("/sessions/login", viewsPassportCall("login"), login);
 router.get("/sessions/logout", viewsPassportCall("current"), logout);
 router.get("/sessions/user", viewsPassportCall("current"), getUser);
 router.get("/api/sessions/githubcallback", passport.authenticate("github", { failureRedirect: "/login" }), githubLogin);
+router.get("/sessions/password_reset", renderForgotPassword);
+router.post("/sessions/password_reset", sendRecoveryMail);
+router.get("/sessions/password_reset/:uid/:token", renderChangePassword);
+router.post("/sessions/password_reset/:uid/:token", changePassword);
 
 export default router;

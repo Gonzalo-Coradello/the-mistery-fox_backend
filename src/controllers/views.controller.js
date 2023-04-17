@@ -1,4 +1,5 @@
-import { cartsService, productsService } from "../repositories/index.js";
+import { cartsService, productsService, usersService } from "../repositories/index.js";
+import { createHash, validateToken, isValidPassword as comparePasswords } from "../utils.js";
 
 // Redirección para empezar por la pantalla de login
 export const redirect = (req, res) => res.redirect("/sessions/login");
@@ -19,6 +20,7 @@ export const getProducts = async (req, res) => {
     const user = req.user;
     res.render("products", { products, user });
   } catch (error) {
+    req.logger.error(error.toString());
     res.render("base", {error});
   }
 };
@@ -36,6 +38,7 @@ export const deleteProduct = async (req, res) => {
     await productsService.deleteProduct(pid)
     res.redirect("/products");
   } catch (error) {
+    req.logger.error(error.toString());
     res.render("base", {error});
   }
 };
@@ -48,6 +51,7 @@ export const getProduct = async (req, res) => {
     const user = req.user;
     res.render("oneProduct", { product, user });
   } catch (error) {
+    req.logger.error(error.toString());
     res.render("base", {error});
   }
 };
@@ -60,6 +64,7 @@ export const addProduct = async (req, res) => {
 
     res.redirect("/products/" + product._id);
   } catch (error) {
+    req.logger.error(error.toString());
     res.render("base", {error});
   }
 };
@@ -70,6 +75,7 @@ export const filterByCategory = async (req, res) => {
     const category = req.body.category;
     res.redirect(`/products?category=${category}`);
   } catch (error) {
+    req.logger.error(error.toString());
     res.render("base", {error});
   }
 };
@@ -85,6 +91,7 @@ export const getCartProducts = async (req, res) => {
     const user = req.user;
     res.render("cart", { cid, products, user });
   } catch (error) {
+    req.logger.error(error.toString());
     res.render("base", {error});
   }
 };
@@ -98,6 +105,7 @@ export const addToCart = async (req, res) => {
     cartsService.addProductToCart(cart, product)
     res.redirect("/carts/" + cid);
   } catch (error) {
+    req.logger.error(error.toString());
     res.render("base", {error});
   }
 };
@@ -110,6 +118,7 @@ export const deleteCartProducts = async (req, res) => {
     const user = req.user;
     res.render("cart", { cid, products: cart, user })
   } catch (error) {
+    req.logger.error(error.toString());
     res.render("base", {error});
   }
 }
@@ -128,6 +137,7 @@ export const purchase = async (req, res) => {
 
     res.render("purchase", { ticket })
   } catch (error) {
+    req.logger.error(error.toString());
     res.render("base", {error});
   }
 }
@@ -179,3 +189,51 @@ export const getUser = (req, res) => {
 export const githubLogin = async (req, res) => {
   return res.cookie("cookieToken", req.user.token).redirect("/products");
 };
+
+// Renderizar página para enviar mail
+export const renderForgotPassword = async (req, res) => {
+  res.render("sessions/forgotPassword")
+}
+
+export const sendRecoveryMail = async (req, res) => {
+  try {
+    const { email } = req.body
+    await usersService.sendMail(email)
+    res.render("sessions/message", {message: `Enviamos un email al correo ${email}. Ingresá al link para restablecer la contraseña.`})
+  } catch (error) {
+    req.logger.error(error.toString());
+    res.render("base", {error});
+  }
+}
+
+export const renderChangePassword = async (req, res) => {
+  const { uid, token } = req.params
+  res.render("sessions/changePassword", {uid, token})
+}
+
+export const changePassword = async (req, res) => {
+  try {
+    const { uid, token } = req.params
+    const { newPassword, confirmation } = req.body
+    const { err } = validateToken(token)
+    const user = await usersService.getUserByID(uid)
+
+    if(err?.name === "TokenExpiredError") return res.status(403).redirect("/password_reset")
+    else if(err) return res.render("errors/base", {error: err})
+
+    if(!newPassword || !confirmation) return res.render("errors/base", {error: "Escriba y confirme la nueva contraseña"})
+    if(comparePasswords(user, newPassword)) return res.render("errors/base", {error: "La contraseña no puede ser igual a la anterior."})
+    if(newPassword != confirmation) return res.render("errors/base", {error: "Las contraseñas no coinciden."})
+
+    const userData = {
+      ... user,
+      password: createHash(newPassword)
+    }
+
+    const newUser = await usersService.updateUser(uid, userData)
+    res.render("sessions/message", {message: "Tu contraseña ha sido actualizada. Ya podés iniciar sesión."})
+  } catch (error) {
+    req.logger.error(error.toString());
+    res.render("base", {error});
+  }
+}
