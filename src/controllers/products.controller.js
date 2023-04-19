@@ -43,7 +43,10 @@ export const updateProduct = async (req, res) => {
     const product = await productsService.getProduct(pid);
     const user = req.user;
 
-    if(user.role === "premium" && user.id !== product.owner) {
+    const userID = user.id.toString()
+    const owner = product.owner?.toString()
+
+    if(user.role === "premium" && userID !== owner) {
       const error = "You can't modify a product owned by another user"
       req.logger.error(error)
       return res.status(403).json({status: "error", error})
@@ -64,10 +67,13 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   try {
     const pid = req.params.pid;
-    const product = productsService.getProduct(pid);
+    const product = await productsService.getProduct(pid);
     const user = req.user;
 
-    if(user.role === "premium" && user.id !== product.owner) {
+    const userID = user.id.toString()
+    const owner = product.owner?.toString()
+
+    if(user.role === "premium" && userID !== owner) {
       const error = "You can't modify a product owned by another user"
       req.logger.error(error)
       return res.status(403).json({status: "error", error})

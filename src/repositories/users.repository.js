@@ -32,8 +32,8 @@ export default class UsersRepository {
   };
 
   updateUser = async (id, data) => {
-    const user = await this.dao.update(id, data);
-    return new UserDTO(user);
+    await this.dao.update(id, data)
+    return await this.getUserDataByID(id)
   };
 
   sendMail = async (email) => {
@@ -45,7 +45,7 @@ export default class UsersRepository {
       code: EErrors.AUTHENTICATION_ERROR
     });
 
-    const token = generateToken(user,  1)
+    const token = generateToken({},  1)
 
     const html = `<h1>Restauración de contraseña</h1>
     <p>Hola 👋</p>

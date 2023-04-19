@@ -113,8 +113,16 @@ export const getCartProducts = async (req, res) => {
 export const addToCart = async (req, res) => {
   try {
     const {cid, pid} = req.params
+    const user = req.user
     const cart = await cartsService.getCart(cid)
     const product = await productsService.getProduct(pid)
+
+    if(user.role === "premium" && cart.owner === user.id) {
+      const error = "You can't add your own product to your cart."
+      req.logger.error(error)
+      return res.status(403).json({status: "error", error}) 
+    }
+
     cartsService.addProductToCart(cart, product)
     res.redirect("/carts/" + cid);
   } catch (error) {
@@ -231,7 +239,7 @@ export const changePassword = async (req, res) => {
     const { err } = validateToken(token)
     const user = await usersService.getUserByID(uid)
 
-    if(err?.name === "TokenExpiredError") return res.status(403).redirect("/password_reset")
+    if(err?.name === "TokenExpiredError") return res.status(403).redirect("/sessions/password_reset")
     else if(err) return res.render("errors/base", {error: err})
 
     if(!newPassword || !confirmation) return res.render("errors/base", {error: "Escriba y confirme la nueva contraseña"})

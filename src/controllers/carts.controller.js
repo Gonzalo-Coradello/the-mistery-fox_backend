@@ -32,10 +32,20 @@ export const getProducts = async (req, res) => {
 export const addProduct = async (req, res) => {
   try {
     const { cid, pid } = req.params;
+    const user = req.user;
     const cart = await cartsService.getCart(cid);
     const product = await productsService.getProduct(pid);
-    const updatedCart = await cartsService.addProductToCart(cart, product);
 
+    const userID = user.id.toString()
+    const owner = product.owner?.toString()
+
+    if(user.role === "premium" && owner === userID) {
+      const error = "You can't add your own product to your cart."
+      req.logger.error(error)
+      return res.status(403).json({status: "error", error}) 
+    }
+
+    const updatedCart = await cartsService.addProductToCart(cart, product);
     res.json({ status: "success", payload: updatedCart });
   } catch (error) {
     req.logger.error(error.toString());

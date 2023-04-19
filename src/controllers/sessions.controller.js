@@ -4,10 +4,13 @@ import EErrors from "../services/errors/enums.js";
 import { generateAuthenticationError } from "../services/errors/info.js";
 import { generateToken, validateToken, isValidPassword as comparePasswords, createHash } from "../utils.js";
 import { usersService } from "../repositories/index.js";
+import config from "../config/config.js";
+
+const { COOKIE_NAME } = config
 
 export const register = async (req, res) => res.json({ status: "success", payload: req.user });
-export const login = async (req, res) => res.cookie("cookieToken", req.user.token).json({ status: "success", payload: req.user });
-export const logout = (req, res) => res.clearCookie("cookieToken").send({ status: "success", message: "Logged out" });
+export const login = async (req, res) => res.cookie(COOKIE_NAME, req.user.token).json({ status: "success", payload: req.user });
+export const logout = (req, res) => res.clearCookie(COOKIE_NAME).send({ status: "success", message: "Logged out" });
 
 export const getUser = async (req, res) => {
   try {
@@ -22,7 +25,7 @@ export const getUser = async (req, res) => {
     res.json({ status: "success", payload: user });
   } catch(error) {
     req.logger.error(error.toString());
-    res.json({status: error, error});
+    res.json({status: "error", error});
   }
 };
 
@@ -35,7 +38,7 @@ export const sendRecoveryMail = async (req, res) => {
     res.json({status: "success", payload: result})
   } catch(error) {
     req.logger.error(error.toString());
-    res.json({status: error, error});
+    res.json({status: "error", error});
   }
 }
 
@@ -46,7 +49,6 @@ export const changePassword = async (req, res) => {
     const { err } = validateToken(token)
     const user = await usersService.getUserByID(uid)
     
-    // if(err?.name === "TokenExpiredError") return res.status(403).redirect("/password_reset")
     if(err?.name === "TokenExpiredError") return res.status(403).json({status: "error", error: "El token expiró"})
     else if(err) return res.json({status: "error", error: err})
 
@@ -63,6 +65,27 @@ export const changePassword = async (req, res) => {
     res.json({status: "success", payload: newUser})
   } catch(error) {
     req.logger.error(error.toString());
-    res.json({status: error, error});
+    res.json({status: "error", error});
   }
 };
+
+export const updateRole = async (req, res) => {
+  try {
+    const { uid } = req.params;
+    const user = await usersService.getUserByID(uid);
+
+    const newRole = user.role === "user" ? "premium" : "user"
+    
+    const data = {
+      ... user,
+      role: newRole
+    }
+    
+    const result = await usersService.updateUser(uid, data);
+
+    res.clearCookie(COOKIE_NAME).json({status: "success", message: `Role updated to ${newRole}. Log in again.`})
+  } catch(error) {
+    req.logger.error(error.toString());
+    res.json({status: "error", error});
+  }
+}
