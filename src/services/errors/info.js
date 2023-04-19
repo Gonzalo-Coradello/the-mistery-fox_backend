@@ -34,6 +34,6 @@ export const generateAuthenticationError = () => {
   return "Invalid credentials.";
 };
 
-export const generateAuthorizationError = (role) => {
-  return `Unauthorized. Role ${role} is not able to perform that action.`;
+export const generateAuthorizationError = () => {
+  return "Unauthorized.";
 };

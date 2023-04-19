@@ -3,7 +3,7 @@ import ProductModel from "../dao/models/product.model.js";
 import { productsService, cartsService } from "../repositories/index.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enums.js";
-import { generateNullError } from "../services/errors/info.js";
+import { generateAuthorizationError, generateNullError } from "../services/errors/info.js";
 
 // Crear carrito
 export const createCart = async (req, res) => {
@@ -20,6 +20,14 @@ export const createCart = async (req, res) => {
 export const getProducts = async (req, res) => {
   try {
     const cid = req.params.cid;
+    const userCart = req.user.cart.toString()
+
+    if(cid !== userCart) CustomError.createError({
+      name: "Authorization error",
+      cause: generateAuthorizationError(),
+      message: "You only have access to your own cart.",
+      code: EErrors.AUTHORIZATION_ERROR
+    })
     const cart = await cartsService.getCart(cid);
     res.json({ status: "success", payload: cart });
   } catch (error) {
@@ -33,19 +41,19 @@ export const addProduct = async (req, res) => {
   try {
     const { cid, pid } = req.params;
     const user = req.user;
+    const userCart = user.cart.toString()
+    
+    if(cid !== userCart) CustomError.createError({
+      name: "Authorization error",
+      cause: generateAuthorizationError(),
+      message: "You only have access to your own cart.",
+      code: EErrors.AUTHORIZATION_ERROR
+    })
+    
     const cart = await cartsService.getCart(cid);
     const product = await productsService.getProduct(pid);
 
-    const userID = user.id.toString()
-    const owner = product.owner?.toString()
-
-    if(user.role === "premium" && owner === userID) {
-      const error = "You can't add your own product to your cart."
-      req.logger.error(error)
-      return res.status(403).json({status: "error", error}) 
-    }
-
-    const updatedCart = await cartsService.addProductToCart(cart, product);
+    const updatedCart = await cartsService.addProductToCart(user, cart, product);
     res.json({ status: "success", payload: updatedCart });
   } catch (error) {
     req.logger.error(error.toString());
@@ -58,6 +66,14 @@ export const updateCart = async (req, res) => {
   try {
     const cid = req.params.cid;
     const products = req.body;
+    const userCart = req.user.cart.toString()
+    
+    if(cid !== userCart) CustomError.createError({
+      name: "Authorization error",
+      cause: generateAuthorizationError(),
+      message: "You only have access to your own cart.",
+      code: EErrors.AUTHORIZATION_ERROR
+    })
 
     const prod = await Promise.all(
       products.map(async (p) => await productsService.getProduct(p.product))
@@ -84,6 +100,14 @@ export const updateQuantity = async (req, res) => {
   try {
     const { cid, pid } = req.params;
     const { quantity } = req.body;
+    const userCart = req.user.cart.toString()
+    
+    if(cid !== userCart) CustomError.createError({
+      name: "Authorization error",
+      cause: generateAuthorizationError(),
+      message: "You only have access to your own cart.",
+      code: EErrors.AUTHORIZATION_ERROR
+    })
 
     const cart = await cartsService.getCart(cid);
     const product = await productsService.getProduct(pid);
@@ -120,6 +144,15 @@ export const updateQuantity = async (req, res) => {
 export const emptyCart = async (req, res) => {
   try {
     const cid = req.params.cid;
+    const userCart = req.user.cart.toString()
+
+    if(cid !== userCart) CustomError.createError({
+      name: "Authorization error",
+      cause: generateAuthorizationError(),
+      message: "You only have access to your own cart.",
+      code: EErrors.AUTHORIZATION_ERROR
+    })
+
     const cart = await cartsService.updateCart(cid, { products: [] });
     res.json({ status: "success", payload: cart });
   } catch (error) {
@@ -132,6 +165,14 @@ export const emptyCart = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   try {
     const { cid, pid } = req.params;
+    const userCart = req.user.cart.toString()
+
+    if(cid !== userCart) CustomError.createError({
+      name: "Authorization error",
+      cause: generateAuthorizationError(),
+      message: "You only have access to your own cart.",
+      code: EErrors.AUTHORIZATION_ERROR
+    })
 
     const cart = await CartModel.findOne({ _id: cid });
     const product = await ProductModel.findOne({ _id: pid });

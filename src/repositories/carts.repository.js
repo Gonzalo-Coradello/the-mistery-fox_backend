@@ -25,21 +25,34 @@ export default class CartRepository {
     return new CartDTO(cart);
   };
 
-  addProductToCart = async (cart, product) => {
-    if (!cart)
+  addProductToCart = async (user, cart, product) => {
+    if (!cart) {
       CustomError.createError({
         name: "Cart error",
         cause: generateNullError("Cart"),
         message: "Error trying to find cart",
         code: EErrors.NULL_ERROR,
-      });
-    if (!product)
+      })
+    }
+
+    if (!product) {
       CustomError.createError({
         name: "Product error",
         cause: generateNullError("Product"),
         message: "Error trying to find product",
         code: EErrors.NULL_ERROR,
-      });
+      })
+    }
+
+    const userID = user.id.toString()
+    const owner = product.owner?.toString()
+
+    if(user.role === "premium" && owner === userID) CustomError.createError({
+      name: "Authorization error",
+      cause: generateAuthorizationError(),
+      message: "You can't add your own product to your cart.",
+      code: EErrors.AUTHORIZATION_ERROR
+    })
 
     const productIndex = cart.products.findIndex((p) =>
       p.product?.equals(product._id)
