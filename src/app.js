@@ -20,6 +20,8 @@ import mockingProducts from "./routes/testing/products.mocking.js"
 import errorHandler from "./middleware/errors/index.js"
 import { logger, addLogger } from "./middleware/logger.js";
 import loggerRouter from "./routes/testing/logger.router.js"
+import { serve, setup } from "swagger-ui-express";
+import specs from "./config/swagger.config.js";
 
 const { PORT, SESSION_SECRET, COOKIE_SECRET, MONGO_URI, DB_NAME } = config;
 
@@ -37,6 +39,9 @@ app.use(passport.session());
 
 // Winston Logger
 app.use(addLogger)
+
+// Swagger
+app.use('/apidocs', serve, setup(specs))
 
 // Configurando el motor de plantillas
 app.engine("handlebars", handlebars.engine());
