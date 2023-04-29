@@ -3,7 +3,8 @@ import CustomError from "../services/errors/CustomError.js";
 
 export const getProducts = async (req, res) => {
   try {
-    const products = await productsService.getProducts();
+    const { products, options: { limit, category, stock } } = await productsService.getPaginate(req)
+    // const products = await productsService.getProducts();
     res.json({ status: "success", payload: products });
   } catch (error) {
     req.logger.error(error.toString());
