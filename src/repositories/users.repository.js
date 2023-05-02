@@ -36,6 +36,10 @@ export default class UsersRepository {
     return await this.getUserDataByID(id)
   };
 
+  deleteUser = async (id) => {
+    return await this.dao.delete(id)
+  }
+
   sendMail = async (email) => {
     const user = await this.getUserByEmail(email)
     if (!user) CustomError.createError({

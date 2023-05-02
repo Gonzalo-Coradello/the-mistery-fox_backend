@@ -1,6 +1,6 @@
 import CartModel from "../models/cart.model.js";
 
-export default class Carts {
+export default class Cart {
     constructor() {}
 
     create = async () => {

@@ -89,3 +89,27 @@ export const updateRole = async (req, res) => {
     res.json({status: "error", error});
   }
 }
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { uid } = req.params
+    const result = await usersService.deleteUser(uid)
+    res.json({status: "success", result})
+  } catch(error) {
+    req.logger.error(error.toString());
+    res.json({status: "error", error});  
+  }
+}
+
+export const deleteUserByEmail = async (req, res) => {
+  try {
+    const { email } = req.params
+    const exists = await usersService.getUserByEmail(email)
+    if(!exists) return res.status(404).json({status: "error", error: "User not found"}) 
+    const result = await usersService.deleteUser(exists._id)
+    res.json({status: "success", result})
+  } catch(error) {
+    req.logger.error(error.toString());
+    res.json({status: "error", error});  
+  }
+}

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const userCollection = "users";
+const userCollection = "Users";
 
 const userSchema = new mongoose.Schema({
   first_name: String,
@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
   },
   cart: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "carts",
+    ref: "Carts",
   },
 });
 

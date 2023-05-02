@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
-const productCollection = "products";
+const productCollection = "Products";
 
 const productSchema = new mongoose.Schema({
   title: String,
@@ -25,8 +25,7 @@ const productSchema = new mongoose.Schema({
   categories: [String],
   thumbnails: [String],
   owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "users",
+    type: String,
     default: "admin"
   }
 });

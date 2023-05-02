@@ -9,6 +9,8 @@ import {
   sendRecoveryMail,
   changePassword,
   updateRole,
+  deleteUser,
+  deleteUserByEmail
 } from "../controllers/sessions.controller.js";
 
 const router = Router();
@@ -21,4 +23,6 @@ router.get( "/github", passport.authenticate("github", { scope: ["user:email"] }
 router.post("/password_reset", sendRecoveryMail);
 router.put("/password_reset/:uid/:token", changePassword);
 router.put("/premium/:uid", passportCall("current"), authorization(["user", "premium"]), updateRole);
+router.delete("/email/:email", deleteUserByEmail)
+router.delete("/:uid", deleteUser)
 export default router;

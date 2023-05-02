@@ -1,6 +1,6 @@
 import UserModel from '../models/user.model.js'
 
-export default class Users {
+export default class User {
     constructor() {}
 
     get = async () => {
@@ -22,5 +22,9 @@ export default class Users {
 
     update = async (id, data) => {
         return await UserModel.updateOne({ _id: id }, data)
+    }
+
+    delete = async (id) => {
+        return await UserModel.deleteOne({ _id: id })
     }
 }

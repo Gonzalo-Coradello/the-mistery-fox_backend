@@ -4,7 +4,6 @@ import CustomError from "../services/errors/CustomError.js";
 export const getProducts = async (req, res) => {
   try {
     const { products, options: { limit, category, stock } } = await productsService.getPaginate(req)
-    // const products = await productsService.getProducts();
     res.json({ status: "success", payload: products });
   } catch (error) {
     req.logger.error(error.toString());
@@ -25,10 +24,10 @@ export const getProduct = async (req, res) => {
 
 export const addProduct = async (req, res) => {
   try {
-    const { role, id } = req.user
+    const { role, email } = req.user
     const product = req.body;
 
-    if(role === "premium") product.owner = id
+    if(role === "premium") product.owner = email
 
     const result = await productsService.createProduct(product);
     res.json({ status: "success", payload: result });
@@ -44,10 +43,10 @@ export const updateProduct = async (req, res) => {
     const product = await productsService.getProduct(pid);
     const user = req.user;
 
-    const userID = user.id.toString()
-    const owner = product.owner?.toString()
+    const userEmail = user.email
+    const owner = product.owner
 
-    if(user.role === "premium" && userID !== owner) {
+    if(user.role === "premium" && userEmail !== owner) {
       const error = "You can't modify a product owned by another user"
       req.logger.error(error)
       return res.status(403).json({status: "error", error})
@@ -71,10 +70,10 @@ export const deleteProduct = async (req, res) => {
     const product = await productsService.getProduct(pid);
     const user = req.user;
 
-    const userID = user.id.toString()
-    const owner = product.owner?.toString()
+    const userEmail = user.email
+    const owner = product.owner
 
-    if(user.role === "premium" && userID !== owner) {
+    if(user.role === "premium" && userEmail !== owner) {
       const error = "You can't modify a product owned by another user"
       req.logger.error(error)
       return res.status(403).json({status: "error", error})

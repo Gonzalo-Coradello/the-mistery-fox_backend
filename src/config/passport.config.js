@@ -46,7 +46,7 @@ const initializePassport = () => {
           const user = await usersService.getUserByEmail(username);
 
           if (user) {
-            req.logger.info("User already exists");
+            req.logger.error("User already exists");
             return done(null, false);
           }
 

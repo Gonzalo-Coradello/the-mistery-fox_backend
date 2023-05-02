@@ -19,6 +19,7 @@ export default {
   SESSION_SECRET: process.env.SESSION_SECRET,
   MONGO_URI: process.env.MONGO_URI,
   DB_NAME: process.env.DB_NAME,
+  TEST_MONGO_URI: process.env.TEST_MONGO_URI,
   GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
   GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
   GITHUB_CALLBACK_URL: process.env.GITHUB_CALLBACK_URL,
