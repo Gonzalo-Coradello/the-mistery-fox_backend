@@ -123,7 +123,7 @@ export const addToCart = async (req, res) => {
       return res.status(403).json({status: "error", error}) 
     }
 
-    cartsService.addProductToCart(cart, product)
+    cartsService.addProductToCart(user, cart, product)
     res.redirect("/carts/" + cid);
   } catch (error) {
     req.logger.error(error.toString());
