@@ -63,6 +63,7 @@ const initializePassport = () => {
           newUser.cart = userCart._id;
 
           const result = await usersService.createUser(newUser);
+          await usersService.sendRegistrationMail(username)
 
           return done(null, result);
         } catch (error) {

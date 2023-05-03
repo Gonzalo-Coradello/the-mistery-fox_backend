@@ -49,7 +49,7 @@ export default class UsersRepository {
       code: EErrors.AUTHENTICATION_ERROR
     });
 
-    const token = generateToken({},  1)
+    const token = generateToken({valid: true},  1)
 
     const html = `<h1>Restauración de contraseña</h1>
     <p>Hola 👋</p>
@@ -60,5 +60,13 @@ export default class UsersRepository {
     <p>¡Saludos!</p>`
 
     return await this.mail.send(email, "Restauración de contraseña", html)
+  }
+
+  sendRegistrationMail = async (email) => {
+    const html = `<h1>¡Registro exitoso!</h1>
+    <p>Gracias por registrarte</p>
+    <p>¡Saludos! 👋</p>`
+
+    return await this.mail.send(email, "Registro exitoso", html)
   }
 }
