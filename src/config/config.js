@@ -26,5 +26,6 @@ export default {
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   USER_MAIL: process.env.USER_MAIL,
-  USER_PASS: process.env.USER_PASS
+  USER_PASS: process.env.USER_PASS,
+  CORS_ORIGIN: process.env.CORS_ORIGIN
 };

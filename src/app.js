@@ -24,7 +24,7 @@ import { serve, setup } from "swagger-ui-express";
 import specs from "./config/swagger.config.js";
 import cors from 'cors'
 
-const { PORT, SESSION_SECRET, COOKIE_SECRET, MONGO_URI, DB_NAME } = config;
+const { PORT, SESSION_SECRET, COOKIE_SECRET, MONGO_URI, DB_NAME, CORS_ORIGIN } = config;
 
 const app = express();
 const server = http.createServer(app);
@@ -34,7 +34,7 @@ const io = new Server(server);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(COOKIE_SECRET));
-app.use(cors())
+app.use(cors({credentials: true, origin: CORS_ORIGIN.split(", ")}))
 initializePassport();
 app.use(passport.initialize());
 app.use(session({ secret: SESSION_SECRET, resave: false, saveUninitialized: true }));
