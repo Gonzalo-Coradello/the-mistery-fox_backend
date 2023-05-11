@@ -1,8 +1,8 @@
-import { usersService } from '../repositories'
+import { usersService } from '../repositories/index.js'
 import config from '../config/config.js'
-import CustomError from '../services/errors/CustomError'
-import { generateAuthenticationError } from '../services/errors/info'
-import EErrors from '../services/errors/enums'
+import CustomError from '../services/errors/CustomError.js'
+import { generateAuthenticationError } from '../services/errors/info.js'
+import EErrors from '../services/errors/enums.js'
 
 const { COOKIE_NAME } = config
 

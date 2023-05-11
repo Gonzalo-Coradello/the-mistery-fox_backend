@@ -119,9 +119,10 @@ const initializePassport = () => {
 
           const token = generateToken(user)
           user.token = token
+          user.last_connection = new Date().toLocaleString()
+          await usersService.updateUser(user._id, user)
 
-          const newUser = new UserDTO(user)
-          return done(null, newUser)
+          return done(null, new UserDTO(user))
         } catch (error) {
           return done(error)
         }
@@ -158,12 +159,16 @@ const initializePassport = () => {
 
             const token = generateToken(result)
             result.token = token
+            user.last_connection = new Date().toLocaleString()
+            await usersService.updateUser(user._id, user)
 
             return done(null, result)
           }
 
           const token = generateToken(user)
           user.token = token
+          user.last_connection = new Date().toLocaleString()
+          await usersService.updateUser(user._id, user)
           done(null, user)
         } catch (error) {
           return done(error)

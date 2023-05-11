@@ -10,5 +10,7 @@ export default class UserDTO {
     this.role = user.role
     this.cart = user.cart
     this.token = user.token
+    this.documents = user.documents || []
+    this.last_connection = user.last_connection
   }
 }

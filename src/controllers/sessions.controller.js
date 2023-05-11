@@ -19,10 +19,15 @@ export const login = async (req, res) =>
     .cookie(COOKIE_NAME, req.user.token)
     .json({ status: 'success', payload: req.user })
 
-export const logout = (req, res) =>
+export const logout = async (req, res) => {
+  const user = req.user
+  user.last_connection = new Date().toLocaleString()
+  await usersService.updateUser(user.id, user)
+
   res
     .clearCookie(COOKIE_NAME)
     .send({ status: 'success', message: 'Logged out' })
+}
 
 export const getUser = async (req, res) => {
   try {
