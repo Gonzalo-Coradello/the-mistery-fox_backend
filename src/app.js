@@ -4,6 +4,7 @@ import productsRouter from "./routes/products.router.js";
 import viewsRouter from "./routes/views.router.js";
 import cartsRouter from "./routes/carts.router.js";
 import chatRouter from "./routes/chat.router.js";
+import usersRouter from "./routes/users.router.js"
 import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
 import { Server } from "socket.io";
@@ -56,6 +57,7 @@ app.use(express.static(__dirname + "/public"));
 app.use("/api/products", productsRouter);
 app.use("/api/carts", passportCall("current"), authorization(["user", "premium"]), cartsRouter);
 app.use("/api/sessions", sessionsRouter);
+app.use("/api/users", passportCall("current"), usersRouter)
 app.use("/chat", passportCall("current"), authorization(["user", "premium"]), chatRouter);
 app.use("/mockingproducts", mockingProducts)
 app.use("/loggertest", loggerRouter)
