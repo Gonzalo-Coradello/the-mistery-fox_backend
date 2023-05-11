@@ -1,9 +1,9 @@
-import express from "express";
-import { renderChat } from "../controllers/chat.controller.js";
-import { passportCall, authorization } from "../middleware/auth.js";
+import express from 'express'
+import { renderChat } from '../controllers/chat.controller.js'
+import { passportCall, authorization } from '../middleware/auth.js'
 
-const router = express.Router();
+const router = express.Router()
 
-router.get("/", passportCall("current"), authorization(["user", "premium"]), renderChat);
+router.get('/', passportCall('current'), authorization(['user', 'premium']), renderChat)
 
-export default router;
+export default router

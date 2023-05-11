@@ -8,7 +8,7 @@ import { passportCall, authorization } from '../middleware/auth.js'
 
 const router = Router()
 
-router.put('/premium/:uid', passportCall('current'), authorization(['user', 'premium']), updateRole)
+router.put('/premium/:uid', passportCall('current'), authorization(['user',  'premium']), updateRole)
 router.delete('/email/:email', deleteUserByEmail)
 router.delete('/:uid', deleteUser)
 

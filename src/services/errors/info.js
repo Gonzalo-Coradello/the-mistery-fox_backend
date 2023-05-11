@@ -11,29 +11,29 @@ export const generatePropertyError = ({
     * author    : needs to be a String, received ${author}
     * code      : needs to be a String, received ${code}
     * price     : needs to be a Number, received ${price}
-    * stock     : needs to be a Number, received ${stock}`;
-};
+    * stock     : needs to be a Number, received ${stock}`
+}
 
-export const generateDuplicatedError = (code) => {
-  return `Code "${code}" is duplicated. Code property must be unique.`;
-};
+export const generateDuplicatedError = code => {
+  return `Code "${code}" is duplicated. Code property must be unique.`
+}
 
-export const generateStockError = (stock) => {
-  return `Stock must be either a positive number or zero. ${stock} is invalid.`;
-};
+export const generateStockError = stock => {
+  return `Stock must be either a positive number or zero. ${stock} is invalid.`
+}
 
-export const generateNullError = (cartOrProduct) => {
-  return `${cartOrProduct} does not exist.`;
-};
+export const generateNullError = cartOrProduct => {
+  return `${cartOrProduct} does not exist.`
+}
 
-export const generatePurchaseError = (cid) => {
-  return `Cart with ID ${cid} is empty. Add products and try again.`;
-};
+export const generatePurchaseError = cid => {
+  return `Cart with ID ${cid} is empty. Add products and try again.`
+}
 
 export const generateAuthenticationError = () => {
-  return "Invalid credentials.";
-};
+  return 'Invalid credentials.'
+}
 
 export const generateAuthorizationError = () => {
-  return "Unauthorized.";
-};
+  return 'Unauthorized.'
+}

@@ -1,11 +1,12 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv'
 import options from './process.js'
 
 const environment = options.mode
 
 dotenv.config({
-  path: environment === "development" ? "./.env.development" : "./.env.production"
-});
+  path:
+    environment === 'development' ? './.env.development' : './.env.production',
+})
 
 export default {
   BASE_URL: process.env.BASE_URL,
@@ -27,5 +28,5 @@ export default {
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   USER_MAIL: process.env.USER_MAIL,
   USER_PASS: process.env.USER_PASS,
-  CORS_ORIGIN: process.env.CORS_ORIGIN
-};
+  CORS_ORIGIN: process.env.CORS_ORIGIN,
+}

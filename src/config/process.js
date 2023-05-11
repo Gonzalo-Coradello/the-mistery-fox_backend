@@ -1,9 +1,9 @@
-import { Command } from "commander";
+import { Command } from 'commander'
 
-const program = new Command();
+const program = new Command()
 
 program.option('--mode <mode>', 'development', 'production')
 
-program.parse();
+program.parse()
 
 export default program.opts()
