@@ -14,11 +14,15 @@ const { COOKIE_NAME } = config
 export const register = async (req, res) =>
   res.json({ status: 'success', payload: req.user })
 
-  export const login = async (req, res) =>
-  res.cookie(COOKIE_NAME, req.user.token).json({ status: 'success', payload: req.user })
+export const login = async (req, res) =>
+  res
+    .cookie(COOKIE_NAME, req.user.token)
+    .json({ status: 'success', payload: req.user })
 
-    export const logout = (req, res) =>
-  res.clearCookie(COOKIE_NAME).send({ status: 'success', message: 'Logged out' })
+export const logout = (req, res) =>
+  res
+    .clearCookie(COOKIE_NAME)
+    .send({ status: 'success', message: 'Logged out' })
 
 export const getUser = async (req, res) => {
   try {
@@ -83,55 +87,6 @@ export const changePassword = async (req, res) => {
 
     const newUser = await usersService.updateUser(uid, userData)
     res.json({ status: 'success', payload: newUser })
-  } catch (error) {
-    req.logger.error(error.toString())
-    res.json({ status: 'error', error })
-  }
-}
-
-export const updateRole = async (req, res) => {
-  try {
-    const { uid } = req.params
-    const user = await usersService.getUserByID(uid)
-
-    const newRole = user.role === 'user' ? 'premium' : 'user'
-
-    const data = {
-      ...user,
-      role: newRole,
-    }
-
-    const result = await usersService.updateUser(uid, data)
-
-    res.clearCookie(COOKIE_NAME).json({
-      status: 'success',
-      message: `Role updated to ${newRole}. Log in again.`,
-    })
-  } catch (error) {
-    req.logger.error(error.toString())
-    res.json({ status: 'error', error })
-  }
-}
-
-export const deleteUser = async (req, res) => {
-  try {
-    const { uid } = req.params
-    const result = await usersService.deleteUser(uid)
-    res.json({ status: 'success', result })
-  } catch (error) {
-    req.logger.error(error.toString())
-    res.json({ status: 'error', error })
-  }
-}
-
-export const deleteUserByEmail = async (req, res) => {
-  try {
-    const email = req.params.email
-    const exists = await usersService.getUserByEmail(email)
-    if (!exists)
-      return res.status(404).json({ status: 'error', error: 'User not found' })
-    const result = await usersService.deleteUser(exists._id || exists.id)
-    res.json({ status: 'success', result })
   } catch (error) {
     req.logger.error(error.toString())
     res.json({ status: 'error', error })

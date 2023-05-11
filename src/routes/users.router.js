@@ -3,7 +3,7 @@ import {
   updateRole,
   deleteUser,
   deleteUserByEmail,
-} from '../controllers/sessions.controller.js'
+} from '../controllers/users.controller.js'
 import { passportCall, authorization } from '../middleware/auth.js'
 
 const router = Router()
