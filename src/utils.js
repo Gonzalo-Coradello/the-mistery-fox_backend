@@ -24,8 +24,7 @@ export const createHash = (password) => bcrypt.hashSync(password, bcrypt.genSalt
 export const isValidPassword = (user, password) => bcrypt.compareSync(password, user.password);
 
 export const codeGenerator = async () => {
-  let last = (await TicketModel.find().sort({ purchase_datetime: -1 }))[0].code
-  if(!last) last = "AA00"
+  let last = (await TicketModel.find().sort({ purchase_datetime: -1 }))[0]?.code || "AA00"
   
   let letters = last.slice(0, 2)
   let nums = parseInt(last.slice(2))
