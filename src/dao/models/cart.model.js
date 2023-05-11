@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 
-const cartCollection = "Carts";
+const cartCollection = 'Carts'
 
 const cartSchema = new mongoose.Schema({
   products: {
@@ -8,16 +8,16 @@ const cartSchema = new mongoose.Schema({
       {
         product: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Products",
+          ref: 'Products',
         },
         quantity: Number,
       },
     ],
     default: [],
   },
-});
+})
 
-mongoose.set("strictQuery", false);
-const CartModel = mongoose.model(cartCollection, cartSchema);
+mongoose.set('strictQuery', false)
+const CartModel = mongoose.model(cartCollection, cartSchema)
 
-export default CartModel;
+export default CartModel
