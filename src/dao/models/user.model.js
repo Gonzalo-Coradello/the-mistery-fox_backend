@@ -20,6 +20,16 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Carts",
   },
+  documents: {
+    type: [
+      {
+        name: String,
+        reference: String
+      }
+    ],
+    default: []
+  },
+  last_connection: Date
 });
 
 mongoose.set("strictQuery", false);
