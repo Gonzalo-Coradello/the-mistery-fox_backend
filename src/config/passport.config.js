@@ -7,6 +7,7 @@ import config from "./config.js";
 import { cartsService, usersService } from "../repositories/index.js";
 import UserDTO from "../dao/DTO/user.dto.js";
 import CustomError from "../services/errors/CustomError.js";
+import options from './process.js'
 
 const {
   PRIVATE_KEY,
@@ -18,6 +19,8 @@ const {
   GITHUB_CLIENT_SECRET,
   GITHUB_CALLBACK_URL,
 } = config;
+
+const environment = options.mode
 
 const JWTStrategy = jwt.Strategy;
 const ExtractJWT = jwt.ExtractJwt;
@@ -63,7 +66,10 @@ const initializePassport = () => {
           newUser.cart = userCart._id;
 
           const result = await usersService.createUser(newUser);
-          await usersService.sendRegistrationMail(username)
+          
+          if(environment === 'production') {
+            await usersService.sendRegistrationMail(username)
+          }
 
           return done(null, result);
         } catch (error) {
