@@ -3,6 +3,7 @@ import config from '../config/config.js'
 import CustomError from '../services/errors/CustomError.js'
 import { generateAuthenticationError } from '../services/errors/info.js'
 import EErrors from '../services/errors/enums.js'
+import __dirname from '../utils.js'
 
 const { COOKIE_NAME } = config
 
@@ -54,6 +55,29 @@ export const deleteUserByEmail = async (req, res) => {
       })
     const result = await usersService.deleteUser(user._id || user.id)
     res.json({ status: 'success', result })
+  } catch (error) {
+    req.logger.error(error.toString())
+    res.json({ status: 'error', error })
+  }
+}
+
+export const uploadDocuments = async (req, res) => {
+  try {
+    const user = await usersService.getUserDataByID(req.user.id)
+    
+    const document = {
+      name: req.file.documentType,
+      reference: `${req.file.destination.replace(`${__dirname}/public`, '')}/${req.file.filename}`,
+    }
+
+    const updatedUser = {
+      ...user,
+      documents: user.documents.concat(document),
+    }
+
+    await usersService.updateUser(user.id, updatedUser)
+
+    res.json({ status: 'success', payload: document })
   } catch (error) {
     req.logger.error(error.toString())
     res.json({ status: 'error', error })
