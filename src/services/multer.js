@@ -12,6 +12,7 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const { id } = req.user
     const event = req.body.event
+
     if (event === DOCUMENT_TYPES.PROFILE) {
       cb(null, __dirname + '/public/images/profiles')
     } else if (event === DOCUMENT_TYPES.PRODUCT) {
@@ -25,21 +26,21 @@ const storage = multer.diskStorage({
     } else throw new Error('Error uploading file.')
   },
   filename: function (req, file, cb) {
-    const { id } = req.user
+    const { id, documents } = req.user
     const event = req.body.event
     if (event === DOCUMENT_TYPES.PROFILE) {
-      file.documentType = DOCUMENT_TYPES.PROFILE
+      file.document_type = DOCUMENT_TYPES.PROFILE
       cb(null, `${id}.png`)
     } else if (event === DOCUMENT_TYPES.PRODUCT) {
-      file.documentType = DOCUMENT_TYPES.PRODUCT
+      file.document_type = DOCUMENT_TYPES.PRODUCT
       const { author, title, lang } = req.body
       const authorNames = author.split(' ')
       const lastName = authorNames[authorNames.length - 1]
       const bookName = title.split(' ').join('-')
-      const fileName = `${lastName}_${bookName}_${lang}`.toLowerCase()
+      let fileName = `${lastName}_${bookName}_${lang}`.toLowerCase()
       cb(null, `${fileName}.png`)
     } else if (event === DOCUMENT_TYPES.DOCUMENT) {
-      file.documentType = req.body.document_type
+      file.document_type = req.body.document_type
       cb(null, file.originalname.replace(/\s/g, '_').replace(/_-_/g, '_').toLowerCase())
     } else throw new Error('Error uploading file.')
   },
