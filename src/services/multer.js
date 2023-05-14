@@ -1,11 +1,47 @@
 import multer from 'multer'
+import fs from 'fs'
+import __dirname from '../utils.js'
+
+export const DOCUMENT_TYPES = {
+  PROFILE: 'profile',
+  PRODUCT: 'product',
+  DOCUMENT: 'document',
+}
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, __dirname + '/public/img')
+    const { id } = req.user
+    const event = req.body.event
+    if (event === DOCUMENT_TYPES.PROFILE) {
+      cb(null, __dirname + '/public/images/profiles')
+    } else if (event === DOCUMENT_TYPES.PRODUCT) {
+      cb(null, __dirname + '/public/images/products')
+    } else if (event === DOCUMENT_TYPES.DOCUMENT) {
+      const dir = __dirname + `/public/documents/${id}`
+      if (!fs.existsSync(dir)) {
+        return fs.mkdir(dir, error => cb(error, dir))
+      }
+      cb(null, dir)
+    } else throw new Error('Error uploading file.')
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname)
+    const { id } = req.user
+    const event = req.body.event
+    if (event === DOCUMENT_TYPES.PROFILE) {
+      file.documentType = DOCUMENT_TYPES.PROFILE
+      cb(null, `${id}.png`)
+    } else if (event === DOCUMENT_TYPES.PRODUCT) {
+      file.documentType = DOCUMENT_TYPES.PRODUCT
+      const { author, title, lang } = req.body
+      const authorNames = author.split(' ')
+      const lastName = authorNames[authorNames.length - 1]
+      const bookName = title.split(' ').join('-')
+      const fileName = `${lastName}_${bookName}_${lang}`.toLowerCase()
+      cb(null, `${fileName}.png`)
+    } else if (event === DOCUMENT_TYPES.DOCUMENT) {
+      file.documentType = req.body.document_type
+      cb(null, file.originalname.replace(/\s/g, '_').replace(/_-_/g, '_').toLowerCase())
+    } else throw new Error('Error uploading file.')
   },
 })
 
