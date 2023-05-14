@@ -26,8 +26,10 @@ const storage = multer.diskStorage({
     } else throw new Error('Error uploading file.')
   },
   filename: function (req, file, cb) {
-    const { id, documents } = req.user
+    const { id } = req.user
     const event = req.body.event
+    console.log(req.body)
+    console.log(file)
     if (event === DOCUMENT_TYPES.PROFILE) {
       file.document_type = DOCUMENT_TYPES.PROFILE
       cb(null, `${id}.png`)

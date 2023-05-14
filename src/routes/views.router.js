@@ -25,6 +25,7 @@ import {
   changePassword,
 } from '../controllers/views.controller.js'
 import { viewsPassportCall, viewsAuthorization } from '../middleware/auth.js'
+import { uploader } from '../services/multer.js'
 
 const router = Router()
 
@@ -32,10 +33,10 @@ router.get('/', redirect)
 router.get('/products', viewsPassportCall('current'), getProducts)
 router.get('/products/create', viewsPassportCall('current'), viewsAuthorization(['premium', 'admin']), renderForm)
 router.get('/products/:pid', viewsPassportCall('current'), getProduct)
-router.post('/products', viewsPassportCall('current'), viewsAuthorization(['premium', 'admin']), addProduct)
+router.post('/products', viewsPassportCall('current'), viewsAuthorization(['premium', 'admin']), uploader.array('file', 1), addProduct)
 router.post('/products/category', viewsPassportCall('current'), filterByCategory)
 router.post('/products/delete/:pid', viewsPassportCall('current'), viewsAuthorization(['premium', 'admin']), deleteProduct)
-router.get('/carts/:cid', viewsPassportCall('current'), viewsAuthorization(['user', 'premium']), getCartProducts)
+router.get('/carts/:cid', viewsPassportCall('current'), viewsAuthorization(['user', 'premium']),  getCartProducts)
 router.post('/carts/:cid', viewsPassportCall('current'), viewsAuthorization(['user', 'premium']), deleteCartProducts)
 router.post('/carts/:cid/products/:pid', viewsPassportCall('current'), viewsAuthorization(['user', 'premium']), addToCart)
 router.post('/carts/:cid/purchase', viewsPassportCall('current'), viewsAuthorization(['user', 'premium']), purchase)
