@@ -3,6 +3,7 @@ import {
   updateRole,
   deleteUser,
   deleteUserByEmail,
+  uploadDocuments,
 } from '../controllers/users.controller.js'
 import { passportCall, authorization } from '../middleware/auth.js'
 import { uploader } from '../services/multer.js'
@@ -10,7 +11,7 @@ import { uploader } from '../services/multer.js'
 const router = Router()
 
 router.put('/premium/:uid', passportCall('current'), authorization(['user',  'premium']), updateRole)
-router.post('/:uid/documents', uploader.array('files'), uploadDocuments)
+router.post('/:uid/documents', passportCall('current'), authorization(['user', 'premium']), uploader.single('file'), uploadDocuments)
 router.delete('/email/:email', deleteUserByEmail)
 router.delete('/:uid', deleteUser)
 
