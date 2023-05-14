@@ -3,7 +3,6 @@ import config from '../config/config.js'
 import CustomError from '../services/errors/CustomError.js'
 import { generateAuthenticationError } from '../services/errors/info.js'
 import EErrors from '../services/errors/enums.js'
-import __dirname from '../utils.js'
 
 const { COOKIE_NAME } = config
 
@@ -11,15 +10,21 @@ export const updateRole = async (req, res) => {
   try {
     const { uid } = req.params
     const user = await usersService.getUserByID(uid)
+    const { documents } = user
 
-    const newRole = user.role === 'user' ? 'premium' : 'user'
+    const cb = str => document => document.name === str
 
-    const data = {
-      ...user,
-      role: newRole,
+    if(user.role === 'user' && (!documents.find(cb('identification')) || !documents.find(cb('address')) || !documents.find(cb('account_status')) )) {
+      const error = `Debes subir los siguientes documentos para poder pasarte a Premium:
+      - Identificación
+      - Comprobante de domicilio
+      - Comprobante de estado de cuenta`
+      req.logger.error(error)
+      return res.status(403).json({ status: 'error', error })
     }
 
-    const result = await usersService.updateUser(uid, data)
+    const newRole = user.role === 'user' ? 'premium' : 'user'
+    await usersService.updateUser(uid, { ...user, role: newRole })
 
     res.clearCookie(COOKIE_NAME).json({
       status: 'success',
@@ -64,20 +69,8 @@ export const deleteUserByEmail = async (req, res) => {
 export const uploadDocuments = async (req, res) => {
   try {
     const user = await usersService.getUserDataByID(req.user.id)
-    
-    const document = {
-      name: req.file.documentType,
-      reference: `${req.file.destination.replace(`${__dirname}/public`, '')}/${req.file.filename}`,
-    }
-
-    const updatedUser = {
-      ...user,
-      documents: user.documents.concat(document),
-    }
-
-    await usersService.updateUser(user.id, updatedUser)
-
-    res.json({ status: 'success', payload: document })
+    const documents = await usersService.saveDocuments(user, req.files)
+    res.json({ status: 'success', payload: documents })
   } catch (error) {
     req.logger.error(error.toString())
     res.json({ status: 'error', error })
