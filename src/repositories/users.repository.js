@@ -13,7 +13,9 @@ export default class UsersRepository {
     this.mail = new Mail()
   }
 
-  getUsers = async () => await this.dao.get()
+  getUsers = async () => {
+    return await this.dao.get()
+  }
 
   getUserByID = async id => {
     return await this.dao.getByID(id)
@@ -39,6 +41,10 @@ export default class UsersRepository {
 
   deleteUser = async id => {
     return await this.dao.delete(id)
+  }
+
+  deleteManyUsers = async ids => {
+    return await this.dao.deleteMany(ids)
   }
 
   sendMail = async email => {

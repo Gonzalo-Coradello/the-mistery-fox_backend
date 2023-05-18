@@ -6,6 +6,44 @@ import EErrors from '../services/errors/enums.js'
 
 const { COOKIE_NAME } = config
 
+export const getUsers = async (req, res) => {
+  try {
+    const users = await usersService.getUsers()
+    const usersData = users.map(({ first_name, last_name, email, role }) => ({
+      first_name,
+      last_name,
+      email,
+      role,
+    }))
+
+    res.json({ status: 'success', payload: usersData })
+  } catch (error) {
+    req.logger.error(error.toString())
+    res.json({ status: 'error', error })
+  }
+}
+
+export const deleteInactiveUsers = async (req, res) => {
+  try {
+    const users = await usersService.getUsers()
+
+    const getDiff = date => {
+      const today = new Date()
+      const diff = today.getTime() - date.getTime() // Diferencia en milisegundos
+      return diff / (1000 * 60 * 60 * 24) // Convierte milisegundos en días
+    }
+
+    const inactiveUsers = users.filter(({ last_connection }) => getDiff(last_connection) > 2)
+    const ids = inactiveUsers.map(user => user._id)
+    const result = await usersService.deleteManyUsers(ids)
+
+    res.json({ status: 'success', result })
+  } catch (error) {
+    req.logger.error(error.toString())
+    res.json({ status: 'error', error })
+  }
+}
+
 export const updateRole = async (req, res) => {
   try {
     const { uid } = req.params
@@ -14,7 +52,12 @@ export const updateRole = async (req, res) => {
 
     const cb = str => document => document.name === str
 
-    if(user.role === 'user' && (!documents.find(cb('identification')) || !documents.find(cb('address')) || !documents.find(cb('account_status')) )) {
+    if (
+      user.role === 'user' &&
+      (!documents.find(cb('identification')) ||
+        !documents.find(cb('address')) ||
+        !documents.find(cb('account_status')))
+    ) {
       const error = `Debes subir los siguientes documentos para poder pasarte a Premium:
       - Identificación
       - Comprobante de domicilio

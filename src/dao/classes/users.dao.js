@@ -27,4 +27,8 @@ export default class User {
   delete = async id => {
     return await UserModel.deleteOne({ _id: id })
   }
+
+  deleteMany = async ids => {
+    return await UserModel.deleteMany({ _id: { $in: ids } })
+  }
 }
