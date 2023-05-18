@@ -211,7 +211,7 @@ export const login = async (req, res) => {
 // Logout
 export const logout = async (req, res) => {
   const user = req.user
-  user.last_connection = new Date().toLocaleString()
+  user.last_connection = new Date()
   await usersService.updateUser(user.id, user)
   res.clearCookie('cookieToken').redirect('/sessions/login')
 }
