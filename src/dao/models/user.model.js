@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
     ],
     default: [],
   },
-  last_connection: String,
+  last_connection: Date,
 })
 
 mongoose.set('strictQuery', false)
