@@ -8,7 +8,6 @@ import usersRouter from './src/routes/users.router.js'
 import handlebars from 'express-handlebars'
 import __dirname from './src/utils.js'
 import { Server } from 'socket.io'
-import mongoose from 'mongoose'
 import sessionsRouter from './src/routes/sessions.router.js'
 import cookieParser from 'cookie-parser'
 import passport from 'passport'
@@ -16,20 +15,19 @@ import initializePassport from './src/config/passport.config.js'
 import { passportCall, authorization } from './src/middleware/auth.js'
 import session from 'express-session'
 import config from './src/config/config.js'
-import { createMessage } from './src/controllers/chat.controller.js'
 import mockingProducts from './src/routes/testing/products.mocking.js'
 import errorHandler from './src/middleware/errors/index.js'
-import { logger, addLogger } from './src/middleware/logger.js'
+import { addLogger } from './src/middleware/logger.js'
 import loggerRouter from './src/routes/testing/logger.router.js'
 import { serve, setup } from 'swagger-ui-express'
 import specs from './src/config/swagger.config.js'
 import cors from 'cors'
 
-const { PORT, SESSION_SECRET, COOKIE_SECRET, MONGO_URI, DB_NAME, CORS_ORIGIN } = config
+const { SESSION_SECRET, COOKIE_SECRET, CORS_ORIGIN } = config
 
 const app = express()
-const server = http.createServer(app)
-const io = new Server(server)
+export const server = http.createServer(app)
+export const io = new Server(server)
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -64,18 +62,3 @@ app.use('/', viewsRouter)
 
 // Middleware de errores
 app.use(errorHandler)
-
-// Conectando mongoose con Atlas e iniciando el servidor
-mongoose.set('strictQuery', false)
-mongoose.connect(MONGO_URI, { dbName: DB_NAME }, error => {
-  if (error) {
-    return logger.fatal("Can't connect to the DB")
-  }
-
-  logger.info('DB connected')
-  server.listen(PORT, () => logger.info(`Listening on port ${PORT}`))
-  server.on('error', e => logger.error(e))
-})
-
-// Websockets chat
-io.on('connection', createMessage(io))
