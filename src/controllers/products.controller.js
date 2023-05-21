@@ -1,5 +1,6 @@
 import { productsService, usersService } from '../repositories/index.js'
 import CustomError from '../services/errors/CustomError.js'
+import Mail from '../services/mail.js'
 
 export const getProducts = async (req, res) => {
   try {
@@ -75,17 +76,24 @@ export const deleteProduct = async (req, res) => {
     const pid = req.params.pid
     const product = await productsService.getProduct(pid)
     const user = req.user
-
     const userEmail = user.email
-    const owner = product.owner
 
-    if (user.role === 'premium' && userEmail !== owner) {
+    if (user.role === 'premium' && userEmail !== product.owner) {
       const error = "You can't modify a product owned by another user"
       req.logger.error(error)
       return res.status(403).json({ status: 'error', error })
     }
 
     const result = await productsService.deleteProduct(pid)
+    
+    const owner = await usersService.getUserByEmail(product.owner)
+    const mail = new Mail
+    const html = `<h1>Su producto fue eliminado</h1>
+    <p>Hola, ${owner.first_name}. Su producto '${product.title}' (ID: ${pid}) ha sido eliminado.</p>`
+
+    if(owner.role === 'premium') {
+      mail.send(owner.email, 'Producto eliminado', html)
+    }
 
     res.json({ status: 'success', payload: result })
   } catch (error) {
