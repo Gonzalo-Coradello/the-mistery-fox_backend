@@ -26,7 +26,7 @@ export default class CartRepository {
     return new CartDTO(cart)
   }
 
-  addProductToCart = async (user, cart, product) => {
+  addProductToCart = async (user, cart, product, quantity) => {
     if (!cart) {
       CustomError.createError({
         name: 'Cart error',
@@ -60,10 +60,10 @@ export default class CartRepository {
       p.product?.equals(product._id)
     )
     if (productIndex === -1) {
-      cart.products.push({ product: product._id, quantity: 1 })
+      cart.products.push({ product: product._id, quantity })
       await this.updateCart(cart.id, cart)
     } else {
-      cart.products[productIndex].quantity++
+      cart.products[productIndex].quantity += quantity
       await this.updateCart(cart.id, cart)
     }
     return new CartDTO(cart)

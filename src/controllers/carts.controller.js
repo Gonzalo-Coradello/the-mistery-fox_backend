@@ -46,6 +46,7 @@ export const addProduct = async (req, res) => {
     const { cid, pid } = req.params
     const user = req.user
     const userCart = user.cart.toString()
+    const quantity = req.body.quantity || 1
 
     if (cid !== userCart)
       CustomError.createError({
@@ -58,7 +59,7 @@ export const addProduct = async (req, res) => {
     const cart = await cartsService.getCart(cid)
     const product = await productsService.getProduct(pid)
 
-    const updatedCart = await cartsService.addProductToCart(user, cart, product)
+    const updatedCart = await cartsService.addProductToCart(user, cart, product, quantity)
     res.json({ status: 'success', payload: updatedCart })
   } catch (error) {
     req.logger.error(error.toString())
