@@ -222,15 +222,15 @@ export const purchase = async (req, res) => {
   try {
     const { cid } = req.params
     const purchaser = req.user.email
-    const { outOfStock, ticket } = await cartsService.purchase(cid, purchaser)
+    const { ticket, outOfStock, preferenceId } = await cartsService.purchase(cid, purchaser)
 
     if (outOfStock.length > 0) {
       const ids = outOfStock.map(p => p._id)
       req.logger.info('One or more products were out of stock.')
-      return res.json({ status: 'success', payload: ids })
+      return res.json({ status: 'error', payload: { outOfStock: ids }})
     }
 
-    res.json({ status: 'success', payload: ticket })
+    res.json({ status: 'success', payload: { ticket, preferenceId }})
   } catch (error) {
     req.logger.error(error.toString())
     res.json({ status: 'error', error })

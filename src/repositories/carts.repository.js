@@ -6,6 +6,9 @@ import {
   generatePurchaseError,
 } from '../services/errors/info.js'
 import { productsService, ticketsService } from './index.js'
+import mercadopago from 'mercadopago'
+import config from '../config/config.js'
+const { FRONTEND_BASE_URL } = config
 
 export default class CartRepository {
   constructor(dao) {
@@ -69,6 +72,10 @@ export default class CartRepository {
     return new CartDTO(cart)
   }
 
+  prepareCheckout = async () => {
+
+  }
+
   purchase = async (cid, purchaser) => {
     const cart = await this.getCart(cid)
     if (cart.products.length === 0)
@@ -95,16 +102,34 @@ export default class CartRepository {
     const available = cartProducts.filter(p => p.stock >= p.quantity)
     const amount = available.reduce((acc, product) => acc + product.price, 0)
 
-    const ticket =
-      available.length > 0
-        ? (await ticketsService.createTicket({ amount, purchaser })).toObject()
-        : null
-    available.forEach(
-      async product =>
-        await productsService.updateStock(product._id, product.quantity)
-    )
-    await this.updateCart(cid, { products: outOfStock })
+    if(outOfStock.length > 0) {
+      await this.updateCart(cid, { products: available })
+      return { outOfStock }
+    }
 
-    return { outOfStock, ticket }
+    let preference = {
+      items: [],
+      back_urls: {
+        "success": `${FRONTEND_BASE_URL}/checkout/success`,
+        "failure": `${FRONTEND_BASE_URL}/checkout/failure`,
+        "pending": `${FRONTEND_BASE_URL}/checkout/pending`
+      },
+      auto_return: "approved",
+    }
+
+    available.forEach(prod => {
+      preference.items.push({
+        title: prod.title,
+        unit_price: prod.price,
+        quantity: prod.quantity
+      })
+    })
+
+    const response = await mercadopago.preferences.create(preference)
+
+    const ticket = (await ticketsService.createTicket({ amount, purchaser, items: available })).toObject()
+    available.forEach(async product => await productsService.updateStock(product._id, product.quantity) )
+
+    return { outOfStock, ticket, preferenceId: response.body.id }
   }
 }
