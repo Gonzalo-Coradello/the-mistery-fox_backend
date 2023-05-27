@@ -8,6 +8,8 @@ import {
   emptyCart,
   deleteProduct,
   purchase,
+  prepareCheckout,
+  finishCheckout,
 } from '../controllers/carts.controller.js'
 
 const router = Router()
@@ -20,5 +22,7 @@ router.post('/:cid/products/:pid', addProduct)
 router.put('/:cid/products/:pid', updateQuantity)
 router.delete('/:cid/products/:pid', deleteProduct)
 router.post('/:cid/purchase', purchase)
+router.post('/:cid/prepareCheckout', prepareCheckout)
+router.post('/:cid/finishCheckout', finishCheckout)
 
 export default router

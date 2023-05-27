@@ -236,3 +236,38 @@ export const purchase = async (req, res) => {
     res.json({ status: 'error', error })
   }
 }
+
+// prepareCheckout y finishCheckout hacen lo mismo que la función purchase pero dividido en dos pasos.
+// Primero se verifica si hay productos sin stock y se prepara el preferenceId para realizar la compra con MercadoPago
+// Luego, al realizar la compra, el front llama a finish checkout para que genere el ticket de compra, cambie el stock de los productos y vacíe el carrito.
+export const prepareCheckout = async (req, res) => {
+  try {
+    const { cid } = req.params
+    const { outOfStock, available, preferenceId } = await cartsService.prepareCheckout(cid)
+
+    if (outOfStock.length > 0) {
+      const ids = outOfStock.map(p => p._id)
+      req.logger.info('One or more products were out of stock.')
+      return res.json({ status: 'error', payload: { outOfStock: ids }})
+    }
+
+    res.json({ status: 'success', payload: { items: available, preferenceId }})
+  } catch (error) {
+    req.logger.error(error.toString())
+    res.json({ status: 'error', error })
+  }
+}
+
+export const finishCheckout = async (req, res) => {
+  try {
+    const cid = req.params.cid
+    const items = req.body
+    const purchaser = req.user.email 
+
+    const ticket = await cartsService.finishCheckout(cid, items, purchaser)
+    res.json({ status: 'success', payload: ticket })
+  } catch (error) {
+    req.logger.error(error.toString())
+    res.json({ status: 'error', error })
+  }
+}

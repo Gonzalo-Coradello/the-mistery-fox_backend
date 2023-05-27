@@ -72,8 +72,64 @@ export default class CartRepository {
     return new CartDTO(cart)
   }
 
-  prepareCheckout = async () => {
+  prepareCheckout = async cid => {
+    const cart = await this.getCart(cid)
+    if (cart.products.length === 0)
+      CustomError.createError({
+        name: 'Purchase error',
+        cause: generatePurchaseError(cid),
+        message: 'Error trying to purchase. Cart cannot be empty.',
+        code: EErrors.PURCHASE_ERROR,
+      })
 
+    const cartProducts = await Promise.all(
+      cart.products.map(async product => {
+        const newObj = await productsService.getProduct(
+          product.product || product._id
+        )
+        newObj.quantity = product.quantity
+        return newObj
+      })
+    )
+
+    const outOfStock = cartProducts
+      .filter(p => p.stock < p.quantity)
+      .map(p => ({ product: p._id, quantity: p.quantity }))
+    const available = cartProducts.filter(p => p.stock >= p.quantity)
+
+    if(outOfStock.length > 0) {
+      await this.updateCart(cid, { products: available })
+      return { outOfStock }
+    }
+
+    let preference = {
+      items: [],
+      back_urls: {
+        "success": `${FRONTEND_BASE_URL}/checkout/success`,
+        "failure": `${FRONTEND_BASE_URL}/checkout/failure`,
+        "pending": `${FRONTEND_BASE_URL}/checkout/pending`
+      },
+      auto_return: "approved",
+    }
+
+    available.forEach(prod => {
+      preference.items.push({
+        title: prod.title,
+        unit_price: prod.price,
+        quantity: prod.quantity
+      })
+    })
+
+    const response = await mercadopago.preferences.create(preference)
+    return { outOfStock, available, preferenceId: response.body.id }
+  }
+
+  finishCheckout = async (cid, items, purchaser) => {
+    const amount = items.reduce((acc, product) => acc + product.price * product.quantity, 0)
+    const ticket = (await ticketsService.createTicket({ amount, purchaser, items })).toObject()
+    items.forEach(async product => await productsService.updateStock(product._id, product.quantity) )
+    await this.updateCart(cid, { products: [] })
+    return ticket
   }
 
   purchase = async (cid, purchaser) => {
@@ -100,7 +156,7 @@ export default class CartRepository {
       .filter(p => p.stock < p.quantity)
       .map(p => ({ product: p._id, quantity: p.quantity }))
     const available = cartProducts.filter(p => p.stock >= p.quantity)
-    const amount = available.reduce((acc, product) => acc + product.price, 0)
+    const amount = available.reduce((acc, product) => acc + product.price * product.quantity, 0)
 
     if(outOfStock.length > 0) {
       await this.updateCart(cid, { products: available })
@@ -129,6 +185,7 @@ export default class CartRepository {
 
     const ticket = (await ticketsService.createTicket({ amount, purchaser, items: available })).toObject()
     available.forEach(async product => await productsService.updateStock(product._id, product.quantity) )
+    await this.updateCart(cid, { products: [] })
 
     return { outOfStock, ticket, preferenceId: response.body.id }
   }
