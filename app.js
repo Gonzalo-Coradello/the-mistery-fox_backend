@@ -23,6 +23,7 @@ import { serve, setup } from 'swagger-ui-express'
 import specs from './src/config/swagger.config.js'
 import cors from 'cors'
 import mercadopago from 'mercadopago'
+import ticketsRouter from './src/routes/tickets.router.js'
 
 const { SESSION_SECRET, COOKIE_SECRET, CORS_ORIGIN, MP_ACCESS_TOKEN } = config
 
@@ -57,6 +58,7 @@ app.use('/api/products', productsRouter)
 app.use('/api/carts', passportCall('current'), authorization(['user', 'premium']), cartsRouter)
 app.use('/api/sessions', sessionsRouter)
 app.use('/api/users', passportCall('current'), usersRouter)
+app.use('/api/purchases', ticketsRouter)
 app.use('/chat', passportCall('current'), authorization(['user', 'premium']), chatRouter)
 app.use('/mockingproducts', mockingProducts)
 app.use('/loggertest', loggerRouter)
