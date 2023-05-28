@@ -8,7 +8,7 @@ export default class ProductsRepository {
   getProducts = async () => await this.dao.get()
 
   getPaginate = async req => {
-    const limit = req.query?.limit || 10
+    const limit = req.query?.limit || 12
     const page = req.query?.page || 1
     const category = req.query?.category
     const sortQuery = req.query?.sort
