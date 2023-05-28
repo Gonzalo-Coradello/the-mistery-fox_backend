@@ -134,6 +134,7 @@ export const addToCart = async (req, res) => {
     const user = req.user
     const cart = await cartsService.getCart(cid)
     const product = await productsService.getProduct(pid)
+    const quantity = req.body.quantity || 1
 
     if (user.role === 'premium' && cart.owner === user.id) {
       const error = "You can't add your own product to your cart."
@@ -141,7 +142,7 @@ export const addToCart = async (req, res) => {
       return res.status(403).json({ status: 'error', error })
     }
 
-    cartsService.addProductToCart(user, cart, product)
+    cartsService.addProductToCart(user, cart, product, quantity)
     res.redirect('/carts/' + cid)
   } catch (error) {
     req.logger.error(error.toString())
@@ -170,8 +171,7 @@ export const purchase = async (req, res) => {
     const { outOfStock, ticket } = await cartsService.purchase(cid, purchaser)
 
     if (outOfStock.length > 0) {
-      const ids = outOfStock.map(p => p.product)
-      return res.render('purchase', { ids, ticket, cid })
+      return res.render('purchase', { ids: outOfStock, ticket, cid })
     }
 
     res.render('purchase', { ticket })

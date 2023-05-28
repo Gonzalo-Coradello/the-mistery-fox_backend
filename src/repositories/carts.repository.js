@@ -94,15 +94,17 @@ export default class CartRepository {
 
     const outOfStock = cartProducts
       .filter(p => p.stock < p.quantity)
-      .map(p => ({ product: p._id, quantity: p.quantity }))
+      .map(p => ({ id: p._id, title: p.title, author: p.author }))
     const available = cartProducts.filter(p => p.stock >= p.quantity)
 
     if(outOfStock.length > 0) {
-      await this.updateCart(cid, { products: available })
+      const products = available.map(p => ({ product: p._id, quantity: p.quantity }))
+      await this.updateCart(cid, { products })
       return { outOfStock }
     }
 
-    const notificationURL = `${BASE_URL}/api/purchases/${cid}/finish_checkout?purchaser=${purchaser}`
+    const notificationURL = `https://f5c8-2800-2145-6000-21-6c1d-5b62-4045-dfcc.sa.ngrok.io/api/purchases/${cid}/finish_checkout?purchaser=${purchaser}`
+
     let preference = {
       items: [],
       back_urls: {
@@ -167,39 +169,23 @@ export default class CartRepository {
 
     const outOfStock = cartProducts
       .filter(p => p.stock < p.quantity)
-      .map(p => ({ product: p._id, quantity: p.quantity }))
+      .map(p => p._id)
     const available = cartProducts.filter(p => p.stock >= p.quantity)
     const amount = available.reduce((acc, product) => acc + product.price * product.quantity, 0)
 
     if(outOfStock.length > 0) {
-      await this.updateCart(cid, { products: available })
+      const products = available.map(p => ({ product: p._id, quantity: p.quantity }))
+      await this.updateCart(cid, { products })
       return { outOfStock }
     }
 
-    let preference = {
-      items: [],
-      back_urls: {
-        "success": `${FRONTEND_BASE_URL}/checkout/success`,
-        "failure": `${FRONTEND_BASE_URL}/checkout/failure`,
-        "pending": `${FRONTEND_BASE_URL}/checkout/pending`
-      },
-      auto_return: "approved",
-    }
-
-    available.forEach(prod => {
-      preference.items.push({
-        title: prod.title,
-        unit_price: prod.price,
-        quantity: prod.quantity
-      })
-    })
-
-    const response = await mercadopago.preferences.create(preference)
-
-    const ticket = (await ticketsService.createTicket({ amount, purchaser, items: available })).toObject()
-    available.forEach(async product => await productsService.updateStock(product._id, product.quantity) )
+    const ticket = (await ticketsService.createTicket({ amount, purchaser })).toObject()
+    const products = cart.products.map(product => ({ id: product.product._id.toString(), quantity: product.quantity }))
+    await Promise.all(
+      products.map(async product => await productsService.updateStock(product.id, product.quantity))
+    )
     await this.updateCart(cid, { products: [] })
 
-    return { outOfStock, ticket, preferenceId: response.body.id }
+    return { outOfStock, ticket }
   }
 }

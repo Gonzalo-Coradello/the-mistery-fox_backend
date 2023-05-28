@@ -225,7 +225,7 @@ export const purchase = async (req, res) => {
   try {
     const { cid } = req.params
     const purchaser = req.user.email
-    const { ticket, outOfStock, preferenceId } = await cartsService.purchase(cid, purchaser)
+    const { ticket, outOfStock } = await cartsService.purchase(cid, purchaser)
 
     if (outOfStock.length > 0) {
       const ids = outOfStock.map(p => p._id)
@@ -233,7 +233,7 @@ export const purchase = async (req, res) => {
       return res.json({ status: 'error', payload: { outOfStock: ids }})
     }
 
-    res.json({ status: 'success', payload: { ticket, preferenceId }})
+    res.json({ status: 'success', payload: ticket})
   } catch (error) {
     req.logger.error(error.toString())
     res.json({ status: 'error', error })
@@ -250,9 +250,8 @@ export const prepareCheckout = async (req, res) => {
     const { outOfStock, available, preferenceId } = await cartsService.prepareCheckout(cid, purchaser)
 
     if (outOfStock.length > 0) {
-      const ids = outOfStock.map(p => p._id)
       req.logger.info('One or more products were out of stock.')
-      return res.json({ status: 'error', payload: { outOfStock: ids }})
+      return res.json({ status: 'error', payload: { outOfStock }})
     }
 
     res.json({ status: 'success', payload: { items: available, preferenceId }})
@@ -270,7 +269,7 @@ export const finishCheckout = async (req, res) => {
     if(payment.type !== 'payment') return
     const data = await mercadopago.payment.findById(payment['data.id'])
     const ticket = await cartsService.finishCheckout(cid, data.body, purchaser)
-    
+
     if(!ticket) return res.json({ status: 'error', error: 'Error during payment' })
     res.json({ status: 'success', payload: ticket })
   } catch (error) {
