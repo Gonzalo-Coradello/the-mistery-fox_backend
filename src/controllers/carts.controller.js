@@ -7,6 +7,9 @@ import {
   generateAuthorizationError,
   generateNullError,
 } from '../services/errors/info.js'
+import config from '../config/config.js'
+import mercadopago from 'mercadopago'
+const { MP_ACCESS_TOKEN } = config
 
 // Crear carrito
 export const createCart = async (req, res) => {
@@ -243,7 +246,8 @@ export const purchase = async (req, res) => {
 export const prepareCheckout = async (req, res) => {
   try {
     const { cid } = req.params
-    const { outOfStock, available, preferenceId } = await cartsService.prepareCheckout(cid)
+    const purchaser = req.user.email
+    const { outOfStock, available, preferenceId } = await cartsService.prepareCheckout(cid, purchaser)
 
     if (outOfStock.length > 0) {
       const ids = outOfStock.map(p => p._id)
@@ -260,11 +264,14 @@ export const prepareCheckout = async (req, res) => {
 
 export const finishCheckout = async (req, res) => {
   try {
-    const cid = req.params.cid
-    const items = req.body
-    const purchaser = req.user.email 
+    const { cid } = req.params
+    const { purchaser, ...payment } = req.query
 
-    const ticket = await cartsService.finishCheckout(cid, items, purchaser)
+    if(payment.type !== 'payment') return
+    const data = await mercadopago.payment.findById(payment['data.id'])
+    const ticket = await cartsService.finishCheckout(cid, data.body, purchaser)
+    
+    if(!ticket) return res.json({ status: 'error', error: 'Error during payment' })
     res.json({ status: 'success', payload: ticket })
   } catch (error) {
     req.logger.error(error.toString())

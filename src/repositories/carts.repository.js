@@ -8,7 +8,7 @@ import {
 import { productsService, ticketsService } from './index.js'
 import mercadopago from 'mercadopago'
 import config from '../config/config.js'
-const { FRONTEND_BASE_URL } = config
+const { FRONTEND_BASE_URL, BASE_URL } = config
 
 export default class CartRepository {
   constructor(dao) {
@@ -72,7 +72,7 @@ export default class CartRepository {
     return new CartDTO(cart)
   }
 
-  prepareCheckout = async cid => {
+  prepareCheckout = async (cid, purchaser) => {
     const cart = await this.getCart(cid)
     if (cart.products.length === 0)
       CustomError.createError({
@@ -102,6 +102,7 @@ export default class CartRepository {
       return { outOfStock }
     }
 
+    const notificationURL = `${BASE_URL}/api/purchases/${cid}/finish_checkout?purchaser=${purchaser}`
     let preference = {
       items: [],
       back_urls: {
@@ -109,14 +110,17 @@ export default class CartRepository {
         "failure": `${FRONTEND_BASE_URL}/checkout/failure`,
         "pending": `${FRONTEND_BASE_URL}/checkout/pending`
       },
-      auto_return: "approved",
+      notification_url: notificationURL,
+      auto_return: 'approved',
+      statement_descriptor: 'the mistery fox'
     }
 
     available.forEach(prod => {
       preference.items.push({
         title: prod.title,
         unit_price: prod.price,
-        quantity: prod.quantity
+        quantity: prod.quantity,
+        currency_id: 'ARS'
       })
     })
 
@@ -124,12 +128,21 @@ export default class CartRepository {
     return { outOfStock, available, preferenceId: response.body.id }
   }
 
-  finishCheckout = async (cid, items, purchaser) => {
-    const amount = items.reduce((acc, product) => acc + product.price * product.quantity, 0)
-    const ticket = (await ticketsService.createTicket({ amount, purchaser, items })).toObject()
-    items.forEach(async product => await productsService.updateStock(product._id, product.quantity) )
-    await this.updateCart(cid, { products: [] })
-    return ticket
+  finishCheckout = async (cid, paymentData, purchaser) => {
+    const amount = paymentData.transaction_amount
+    const payment_id = paymentData.id
+    const status = paymentData.status
+
+    if(status === 'approved') {
+      const ticket = (await ticketsService.createTicket({ amount, purchaser, payment_id })).toObject()
+      const cart = await this.getCart(cid)
+      const products = cart.products.map(product => ({ id: product.product._id.toString(), quantity: product.quantity }))
+      await Promise.all(
+        products.map(async product => await productsService.updateStock(product.id, product.quantity))
+      )
+      await this.updateCart(cid, { products: [] })
+      return ticket
+    }
   }
 
   purchase = async (cid, purchaser) => {
