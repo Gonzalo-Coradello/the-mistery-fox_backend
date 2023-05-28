@@ -11,15 +11,7 @@ const ticketSchema = new mongoose.Schema(
     },
     amount: Number,
     purchaser: String,
-    items: [
-      {
-        id: String,
-        title: String,
-        author: String,
-        price: Number,
-        quantity: Number
-      }
-    ]
+    payment_id: Number
   },
   { timestamps: { createdAt: 'purchase_datetime', updatedAt: false } }
 )
