@@ -12,7 +12,7 @@ export default class ProductsRepository {
     const page = req.query?.page || 1
     const category = req.query?.category
     const sortQuery = req.query?.sort
-    const sortOrder = req.query?.sortOrder || 'desc'
+    const sortOrder = req.query?.sort_order || 'desc'
     const stock = req.query?.stock
 
     const query = {
