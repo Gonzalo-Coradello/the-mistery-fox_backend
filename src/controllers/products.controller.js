@@ -32,7 +32,9 @@ export const addProduct = async (req, res) => {
     const product = req.body
     const documents = await usersService.saveDocuments(req.user, req.files)
     product.thumbnails = documents.map(file => file.reference)
-    product.categories = product.categories.split(',').map(c => c.trim())
+    product.categories = Array.isArray(product.categories)
+      ? product.categories
+      : product.categories.split(',').map(c => c.trim())
 
     if (role === 'premium') product.owner = email
 
@@ -85,13 +87,13 @@ export const deleteProduct = async (req, res) => {
     }
 
     const result = await productsService.deleteProduct(pid)
-    
+
     const owner = await usersService.getUserByEmail(product.owner)
-    const mail = new Mail
+    const mail = new Mail()
     const html = `<h1>Su producto fue eliminado</h1>
     <p>Hola, ${owner.first_name}. Su producto '${product.title}' (ID: ${pid}) ha sido eliminado.</p>`
 
-    if(owner.role === 'premium') {
+    if (owner.role === 'premium') {
       mail.send(owner.email, 'Producto eliminado', html)
     }
 
