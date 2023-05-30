@@ -28,8 +28,6 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     const { id } = req.user
     const event = req.body.event
-    console.log(req.body)
-    console.log(file)
     if (event === DOCUMENT_TYPES.PROFILE) {
       file.document_type = DOCUMENT_TYPES.PROFILE
       cb(null, `${id}.png`)
