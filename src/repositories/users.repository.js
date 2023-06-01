@@ -6,7 +6,6 @@ import Mail from '../services/mail.js'
 import config from '../config/config.js'
 import { generateToken } from '../utils.js'
 import __dirname from '../utils.js'
-import UserInfoDTO from '../dao/DTO/userInfo.dto.js'
 
 export default class UsersRepository {
   constructor(dao) {
@@ -37,7 +36,7 @@ export default class UsersRepository {
 
   updateUser = async (id, data) => {
     const user = await this.dao.update(id, data)
-    return new UserInfoDTO(user)
+    return new UserDTO(user)
   }
 
   deleteUser = async id => {

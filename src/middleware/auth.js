@@ -3,10 +3,12 @@ import CustomError from '../services/errors/CustomError.js'
 import { generateAuthenticationError } from '../services/errors/info.js'
 import EErrors from '../services/errors/enums.js'
 import { logger } from './logger.js'
+import { usersService } from '../repositories/index.js'
+import UserDTO from '../dao/DTO/user.dto.js'
 
 export const passportCall = strategy => {
   return async (req, res, next) => {
-    passport.authenticate(strategy, function (err, user) {
+    passport.authenticate(strategy, async function (err, user) {
       if (err) return next(err)
       if (!user) {
         logger.error('Authentication error. Invalid credentials.')
@@ -15,7 +17,8 @@ export const passportCall = strategy => {
           .json({ status: 'error', error: 'Invalid credentials.' })
       }
 
-      req.user = user
+      const updatedUser = new UserDTO({ ...await usersService.getUserByID(user.id), token: user.token })
+      req.user = updatedUser
       next()
     })(req, res, next)
   }
