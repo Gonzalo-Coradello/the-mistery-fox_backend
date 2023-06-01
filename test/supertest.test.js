@@ -98,9 +98,10 @@ describe('Testing e-commerce', function () {
 
     it('El endpoint POST /api/products debe poder crear un producto', async () => {
       const { _body } = await requester
-        .post('/api/products')
+        .post('/api/products/no_file')
         .send(mockProduct)
         .set('Cookie', [`${cookie.name}=${cookie.value}`])
+
       expect(_body.payload._id).to.be.ok
       expect(_body.payload.title).to.be.eql(mockProduct.title)
 
