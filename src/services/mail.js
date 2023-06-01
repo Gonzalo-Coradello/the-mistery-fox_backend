@@ -17,7 +17,7 @@ export default class Mail {
 
   send = async (user, subject, html) => {
     const result = await this.transport.sendMail({
-      from: `CoderCommerce <${user}>`,
+      from: `the mistery fox <${user}>`,
       to: user,
       subject,
       html,
