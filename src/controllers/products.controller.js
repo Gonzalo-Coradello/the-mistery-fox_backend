@@ -46,6 +46,24 @@ export const addProduct = async (req, res) => {
   }
 }
 
+export const addProductWithoutFile = async (req, res) => {
+  try {
+    const { role, email } = req.user
+    const product = req.body
+    product.categories = Array.isArray(product.categories)
+      ? product.categories
+      : product.categories.split(',').map(c => c.trim())
+
+    if (role === 'premium') product.owner = email
+
+    const result = await productsService.createProduct(product)
+    res.json({ status: 'success', payload: result })
+  } catch (error) {
+    req.logger.error(error.toString())
+    res.json({ status: 'error', error })
+  }
+}
+
 export const updateProduct = async (req, res) => {
   try {
     const pid = req.params.pid
