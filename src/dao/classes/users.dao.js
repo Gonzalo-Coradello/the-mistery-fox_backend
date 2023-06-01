@@ -21,7 +21,7 @@ export default class User {
   }
 
   update = async (id, data) => {
-    return await UserModel.updateOne({ _id: id }, data)
+    return await UserModel.findByIdAndUpdate(id, data, { new: true })
   }
 
   delete = async id => {
