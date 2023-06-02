@@ -5,6 +5,8 @@ import EErrors from '../services/errors/enums.js'
 import { logger } from './logger.js'
 import { usersService } from '../repositories/index.js'
 import UserDTO from '../dao/DTO/user.dto.js'
+import config from '../config/config.js'
+const { ADMIN_EMAIL } = config
 
 export const passportCall = strategy => {
   return async (req, res, next) => {
@@ -17,9 +19,14 @@ export const passportCall = strategy => {
           .json({ status: 'error', error: 'Invalid credentials.' })
       }
 
-      const updatedUser = new UserDTO({ ...await usersService.getUserByID(user.id), token: user.token })
-      req.user = updatedUser
-      next()
+      if(user.email === ADMIN_EMAIL) {
+        req.user = user
+        next()
+      } else {
+        const updatedUser = new UserDTO({ ...await usersService.getUserByID(user.id), token: user.token })
+        req.user = updatedUser
+        next()
+      }
     })(req, res, next)
   }
 }
