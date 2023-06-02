@@ -4,3 +4,5 @@ notes.txt
 .env.development
 .env.production
 errors.log
+src/public/documents
+src/public/images/profiles
