@@ -24,6 +24,8 @@ import specs from './src/config/swagger.config.js'
 import cors from 'cors'
 import mercadopago from 'mercadopago'
 import ticketsRouter from './src/routes/tickets.router.js'
+import createMemoryStore from 'memorystore'
+const MemoryStore = createMemoryStore(session)
 
 const { SESSION_SECRET, COOKIE_SECRET, CORS_ORIGIN, MP_ACCESS_TOKEN } = config
 
@@ -37,9 +39,17 @@ app.use(cookieParser(COOKIE_SECRET))
 app.use(cors({ credentials: true, origin: CORS_ORIGIN.split(', ') }))
 initializePassport()
 app.use(passport.initialize())
-app.use(session({ secret: SESSION_SECRET, resave: false, saveUninitialized: true }))
+app.use(
+  session({
+    store: new MemoryStore({ checkPeriod: 86400000 }),
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true },
+  })
+)
 app.use(passport.session())
-mercadopago.configure({access_token: MP_ACCESS_TOKEN})
+mercadopago.configure({ access_token: MP_ACCESS_TOKEN })
 
 // Winston Logger
 app.use(addLogger)
@@ -55,11 +65,21 @@ app.use(express.static(__dirname + '/public'))
 
 // Configuración de rutas
 app.use('/api/products', productsRouter)
-app.use('/api/carts', passportCall('current'), authorization(['user', 'premium']), cartsRouter)
+app.use(
+  '/api/carts',
+  passportCall('current'),
+  authorization(['user', 'premium']),
+  cartsRouter
+)
 app.use('/api/sessions', sessionsRouter)
 app.use('/api/users', passportCall('current'), usersRouter)
 app.use('/api/purchases', ticketsRouter)
-app.use('/chat', passportCall('current'), authorization(['user', 'premium']), chatRouter)
+app.use(
+  '/chat',
+  passportCall('current'),
+  authorization(['user', 'premium']),
+  chatRouter
+)
 app.use('/mockingproducts', mockingProducts)
 app.use('/loggertest', loggerRouter)
 app.use('/', viewsRouter)
