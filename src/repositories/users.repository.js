@@ -63,7 +63,7 @@ export default class UsersRepository {
     <p>Hola 👋</p>
     <p>Solicistaste un cambio de contraseña para tu cuenta.</p>
     <p>Podés hacerlo desde acá:</p>
-    <a href=${config.BASE_URL}/sessions/password_reset/${
+    <a href=${config.FRONTEND_BASE_URL}/sessions/password_reset/${
       user.id || user._id
     }/${token}>Cambiar contraseña</a>
     <br>
