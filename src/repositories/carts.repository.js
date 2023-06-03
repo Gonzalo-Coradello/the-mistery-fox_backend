@@ -9,7 +9,7 @@ import { productsService, ticketsService } from './index.js'
 import mercadopago from 'mercadopago'
 import config from '../config/config.js'
 import Mail from '../services/mail.js'
-const { FRONTEND_BASE_URL } = config
+const { FRONTEND_BASE_URL, BASE_URL } = config
 
 export default class CartRepository {
   constructor(dao) {
@@ -105,7 +105,7 @@ export default class CartRepository {
       return { outOfStock }
     }
 
-    const notificationURL = `https://f5c8-2800-2145-6000-21-6c1d-5b62-4045-dfcc.sa.ngrok.io/api/purchases/${cid}/finish_checkout?purchaser=${purchaser}`
+    const notificationURL = `${BASE_URL}/api/purchases/${cid}/finish_checkout?purchaser=${purchaser}`
 
     let preference = {
       items: [],
