@@ -8,11 +8,13 @@ import {
 import { productsService, ticketsService } from './index.js'
 import mercadopago from 'mercadopago'
 import config from '../config/config.js'
-const { FRONTEND_BASE_URL, BASE_URL } = config
+import Mail from '../services/mail.js'
+const { FRONTEND_BASE_URL } = config
 
 export default class CartRepository {
   constructor(dao) {
     this.dao = dao
+    this.mail = new Mail()
   }
 
   createCart = async () => {
@@ -138,11 +140,13 @@ export default class CartRepository {
     if(status === 'approved') {
       const ticket = (await ticketsService.createTicket({ amount, purchaser, payment_id })).toObject()
       const cart = await this.getCart(cid)
-      const products = cart.products.map(product => ({ id: product.product._id.toString(), quantity: product.quantity }))
+      const products = cart.products.map(product => ({ id: product.product._id.toString(), title: product.product.title, quantity: product.quantity }))
       await Promise.all(
         products.map(async product => await productsService.updateStock(product.id, product.quantity))
       )
       await this.updateCart(cid, { products: [] })
+      await this.sendPurchaseMail(products, amount, payment_id, purchaser)
+
       return ticket
     }
   }
@@ -187,5 +191,17 @@ export default class CartRepository {
     await this.updateCart(cid, { products: [] })
 
     return { outOfStock, ticket }
+  }
+
+  sendPurchaseMail = async (products, amount, payment_id, email) => {
+    const html = `<h1>¡Gracias por tu compra!</h1>
+      <ul>Te compartimos los detalles del pedido:</ul>
+      ${products.map(p => `<li><b>${p.title}</b> x${p.quantity}</li>`)}
+      <p><b>Total:</b> $${amount}</p>
+      <p><b>ID de la compra:</b> ${payment_id}</p>
+      <br>
+      <p>¡Saludos!</p>`
+
+    return await this.mail.send(email, 'Compra realizada', html)
   }
 }
