@@ -14,8 +14,10 @@ export default class ProductsRepository {
     const sortQuery = req.query?.sort
     const sortOrder = req.query?.sort_order || 'desc'
     const stock = req.query?.stock
+    const search = req.query?.search?.replace('+', ' ')
 
-    const query = {
+    const query = search ? { $or: [{ title: { '$regex': search, '$options': 'i' } }, { author: { '$regex': search, '$options': 'i' } }, { categories: { '$regex': search, '$options': 'i' } }] } 
+    : {
       ...(category ? { categories: category } : null),
       ...(stock ? { stock: { $gt: 0 } } : null),
     }
