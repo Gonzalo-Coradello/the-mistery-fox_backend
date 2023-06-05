@@ -61,7 +61,7 @@ export default class UsersRepository {
 
     const html = `<h1>Restauración de contraseña</h1>
     <p>Hola 👋</p>
-    <p>Solicistaste un cambio de contraseña para tu cuenta.</p>
+    <p>Solicitaste un cambio de contraseña para tu cuenta.</p>
     <p>Podés hacerlo desde acá:</p>
     <a href=${config.FRONTEND_BASE_URL}/sessions/password_reset/${
       user.id || user._id
@@ -76,6 +76,14 @@ export default class UsersRepository {
     const html = `<h1>¡Registro exitoso!</h1>
     <p>Gracias por registrarte</p>
     <p>¡Saludos! 👋</p>`
+
+    return await this.mail.send(email, 'Registro exitoso', html)
+  }
+
+  sendDeletedAccountMail = async email => {
+    const html = `<h1>Cuenta eliminada</h1>
+    <p>Su cuenta ha sido eliminada por inactividad</p>
+    <p>Muchas gracias por utilizar the mistery fox ♥</p>`
 
     return await this.mail.send(email, 'Registro exitoso', html)
   }
