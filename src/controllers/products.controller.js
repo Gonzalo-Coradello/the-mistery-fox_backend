@@ -1,6 +1,8 @@
 import { productsService, usersService } from '../repositories/index.js'
 import CustomError from '../services/errors/CustomError.js'
 import Mail from '../services/mail.js'
+import config from '../config/config.js'
+const { COOKIE_NAME } = config
 
 export const getProducts = async (req, res) => {
   try {
@@ -8,7 +10,14 @@ export const getProducts = async (req, res) => {
       products,
       options: { limit, category, stock },
     } = await productsService.getPaginate(req)
-    res.json({ status: 'success', payload: products })
+    res
+      .cookie(COOKIE_NAME, req.user.token, {
+        domain: 'ecommerce.up.railway.app',
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+      })
+      .json({ status: 'success', payload: products })
   } catch (error) {
     req.logger.error(error.toString())
     res.json({ result: 'error', error })
