@@ -45,7 +45,7 @@ app.use(
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: { domain: 'themisteryfox.vercel.app', httpOnly: true, sameSite: 'none', secure: true },
+    cookie: { domain: 'ecommerce.up.railway.app', httpOnly: true, sameSite: 'none', secure: true },
   })
 )
 app.use(passport.session())

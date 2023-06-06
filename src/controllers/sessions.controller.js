@@ -16,7 +16,7 @@ export const register = async (req, res) =>
 
 export const login = async (req, res) =>
   res
-    .cookie(COOKIE_NAME, req.user.token, { domain: 'themisteryfox.vercel.app', sameSite: 'none', secure: true })
+    .cookie(COOKIE_NAME, req.user.token, { domain: 'ecommerce.up.railway.app', sameSite: 'none', secure: true })
     .json({ status: 'success', payload: req.user })
 
 export const logout = async (req, res) => {
