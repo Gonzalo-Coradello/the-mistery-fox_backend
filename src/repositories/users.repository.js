@@ -74,7 +74,7 @@ export default class UsersRepository {
 
   sendRegistrationMail = async email => {
     const html = `<h1>¡Registro exitoso!</h1>
-    <p>Gracias por registrarte</p>
+    <p>Gracias por registrarte en the mistery fox.</p>
     <p>¡Saludos! 👋</p>`
 
     return await this.mail.send(email, 'Registro exitoso', html)
