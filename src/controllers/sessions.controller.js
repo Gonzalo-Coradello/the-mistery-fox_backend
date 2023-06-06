@@ -17,7 +17,6 @@ export const register = async (req, res) =>
 export const login = async (req, res) =>
   res
     .cookie(COOKIE_NAME, req.user.token, {
-      domain: 'ecommerce.up.railway.app',
       httpOnly: true,
       sameSite: 'none',
       secure: true,
