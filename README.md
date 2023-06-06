@@ -3,9 +3,6 @@
 _[en]_ Fully functional e-commerce developed with Node.js, Express and MongoDB, tested with Mocha, Chai and Supertest and documented with Swagger. It includes authentication and authorization and is connected to a payment processing platform.  
 _[es]_  E-commerce completamente funcional desarrollado con Node.js, Express y MongoDB, testeado con Mocha, Chai y Supertest y documentado con Swagger. Cuenta con un servicio de autenticación y está conectado con una pasarela de pago para finalizar las compras.  
 
-## Status
-In progress
-
 ## Features
 - Fully functional e-commerce connected to a payment processing platform.
 - Authentication and authorization service that includes user registration, login and logout, password change and role change between normal and premium user.
@@ -44,10 +41,14 @@ In progress
 ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB) ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)  
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens) ![Mocha](https://img.shields.io/badge/-mocha-%238D6748?style=for-the-badge&logo=mocha&logoColor=white) ![Chai](https://img.shields.io/badge/chai.js-323330?style=for-the-badge&logo=chai&logoColor=red) ![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white) 
 
-<!-- ## Documentation -->
-
 ## Frontend
 https://github.com/Gonzalo-Coradello/the-mistery-fox_ecommerce
 
-## Deploy
-Coming soon
+## Frontend deployment
+https://themisteryfox.vercel.app/
+
+## Backend deployment
+https://ecommerce.up.railway.app/
+
+## Documentation
+https://ecommerce.up.railway.app/apidocs/
