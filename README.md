@@ -45,10 +45,10 @@ _[es]_  E-commerce completamente funcional desarrollado con Node.js, Express y M
 https://github.com/Gonzalo-Coradello/the-mistery-fox_ecommerce
 
 ## Frontend deployment
-https://themisteryfox.vercel.app/
+https://themisteryfox.vercel.app
 
 ## Backend deployment
-https://ecommerce.up.railway.app/
+https://themisteryfox.onrender.com
 
 ## Documentation
-https://ecommerce.up.railway.app/apidocs/
+https://themisteryfox.onrender.com/apidocs
